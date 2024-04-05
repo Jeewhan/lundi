@@ -8,5 +8,10 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@slack/bolt": "^3.17.1",
+    "serverless": "^3.38.0",
+    "serverless-offline": "^13.3.3"
+  }
 }
