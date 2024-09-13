@@ -1,9 +1,11 @@
 {
   "name": "lundi",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc -p .",
+    "build:watch": "tsc -w -p .",
+    "start": "npm run build && node dist/app.js"
   },
   "keywords": [],
   "author": "",
@@ -11,5 +13,10 @@
   "description": "",
   "dependencies": {
     "@slack/bolt": "^3.21.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.2"
   }
 }
