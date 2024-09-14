@@ -9,7 +9,7 @@ class DinnerClub {
     await this.messenger.postMessage(
       process.env.SLACK_DINNER_CHANNEL as string,
       "디너클럽🍜 참가신청을 받습니다!",
-      createBlocks(gatherText, GATHER_DINNER_CLUB, gatherActionOptions)
+      createBlocks(gatherText, gatherActionOptions)
     );
   }
 }
@@ -28,31 +28,53 @@ const gatherText = `디너클럽🍜 참가신청을 받습니다!
 `;
 const gatherActionOptions = [
   {
+    type: "section",
     text: {
-      type: "plain_text",
-      text: "10월 4일(금) 19시",
+      type: "mrkdwn",
+      text: "참여희망일을 선택해주세요.",
     },
-    value: "20241004 19:00",
-  },
-  {
-    text: {
-      type: "plain_text",
-      text: "10월 5일(토) 18시",
+    accessory: {
+      type: "multi_static_select",
+      placeholder: {
+        type: "plain_text",
+        text: "참여희망일",
+        emoji: true,
+      },
+      options: [
+        {
+          text: {
+            type: "plain_text",
+            text: "10월 4일(금) 19시",
+            emoji: true,
+          },
+          value: "20241004 19:00",
+        },
+        {
+          text: {
+            type: "plain_text",
+            text: "10월 5일(토) 18시",
+            emoji: true,
+          },
+          value: "20241005 18:00",
+        },
+        {
+          text: {
+            type: "plain_text",
+            text: "10월 25일(금) 19시",
+            emoji: true,
+          },
+          value: "20241025 19:00",
+        },
+        {
+          text: {
+            type: "plain_text",
+            text: "10월 26일(토) 18시",
+            emoji: true,
+          },
+          value: "20241026 18:00",
+        },
+      ],
+      action_id: GATHER_DINNER_CLUB,
     },
-    value: "20241005 18:00",
-  },
-  {
-    text: {
-      type: "plain_text",
-      text: "10월 25일(금) 19시",
-    },
-    value: "20241025 19:00",
-  },
-  {
-    text: {
-      type: "plain_text",
-      text: "10월 26일(토) 18시",
-    },
-    value: "20241026 18:00",
   },
 ];

@@ -1,10 +1,6 @@
 import { Block } from "@slack/bolt";
 
-export function createBlocks(
-  text: string,
-  actionId: string,
-  actionOptions: any[]
-): Block[] {
+export function createBlocks(text: string, actionOptions: Block[]): Block[] {
   return [
     {
       type: "section",
@@ -16,15 +12,6 @@ export function createBlocks(
     {
       type: "divider",
     },
-    {
-      type: "actions",
-      elements: [
-        {
-          type: "checkboxes",
-          action_id: actionId,
-          options: actionOptions,
-        },
-      ],
-    } as Block,
+    ...actionOptions,
   ];
 }

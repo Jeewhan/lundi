@@ -9,7 +9,7 @@ class LunchClub {
     await this.messenger.postMessage(
       process.env.SLACK_LUNCH_CHANNEL as string,
       "런치클럽🍜 참가신청을 받습니다!",
-      createBlocks(gatherText, GATHER_LUNCH_CLUB, gatherActionOptions)
+      createBlocks(gatherText, gatherActionOptions)
     );
   }
 }
@@ -33,10 +33,18 @@ const gatherText = `런치클럽🍜 참가신청을 받습니다!
 
 const gatherActionOptions = [
   {
-    text: {
-      type: "plain_text",
-      text: "참가신청",
-    },
-    value: "join",
+    type: "actions",
+    elements: [
+      {
+        type: "button",
+        text: {
+          type: "plain_text",
+          text: "참가신청",
+          emoji: true,
+        },
+        value: "join",
+        action_id: GATHER_LUNCH_CLUB,
+      },
+    ],
   },
 ];
