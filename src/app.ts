@@ -3,9 +3,15 @@ import "dotenv/config";
 import {
   App,
   BlockAction,
-  ButtonAction,
   MultiStaticSelectAction,
+  AwsLambdaReceiver,
+  SlackActionMiddlewareArgs,
 } from "@slack/bolt";
+import {
+  AwsCallback,
+  AwsEvent,
+  AwsResponse,
+} from "@slack/bolt/dist/receivers/AwsLambdaReceiver";
 
 import LunchClub from "./controllers/lunch-club";
 import DinnerClub from "./controllers/dinner-club";
@@ -19,59 +25,66 @@ const requestGather = async (body: BodyInit) => {
   });
 };
 
-const app = new App({
-  token: process.env.SLACK_BOT_TOKEN,
+if (!process.env.SLACK_SIGNING_SECRET)
+  throw new Error("SLACK_SIGNING_SECRET is not defined");
+
+const awsLambdaReceiver = new AwsLambdaReceiver({
   signingSecret: process.env.SLACK_SIGNING_SECRET,
 });
 
-(async () => {
-  await app.start(Number(process.env.PORT) || 3000);
+const app = new App({
+  token: process.env.SLACK_BOT_TOKEN,
+  receiver: awsLambdaReceiver,
+});
 
-  const slack = new Slack(app);
-  const lunchClub = new LunchClub(slack);
-  const dinnerClub = new DinnerClub(slack);
+const handler = async (
+  event: AwsEvent,
+  context: any,
+  callback: AwsCallback
+): Promise<AwsResponse> => {
+  const handler = await awsLambdaReceiver.start();
+  return handler(event, context, callback);
+};
 
-  console.log("⚡️ Bolt app is running!");
+const slack = new Slack(app);
+const lunchClub = new LunchClub(slack);
+const dinnerClub = new DinnerClub(slack);
 
-  app.action(GATHER_LUNCH_CLUB, async (argument) => {
-    await argument.ack();
+const handleGatherAction = async (
+  argument: SlackActionMiddlewareArgs<BlockAction>
+) => {
+  await argument.ack();
 
-    const body = argument.body as BlockAction;
-    const payload = argument.payload as MultiStaticSelectAction;
+  const body = argument.body as BlockAction;
+  const payload = argument.payload as MultiStaticSelectAction;
 
-    // NOTE: 무엇을 기록할 것인가?
-    // NOTE: argument
-
-    const requestBody = JSON.stringify({
-      payload: [
-        body.user.name,
-        body.user.id,
-        body.channel!.name,
-        ...payload.selected_options.map((option) => option.value),
-      ],
-    });
-
-    await requestGather(requestBody);
+  const requestBody = JSON.stringify({
+    payload: [
+      body.user.name,
+      body.user.id,
+      body.channel!.name,
+      ...payload.selected_options.map((option) => option.value),
+    ],
   });
 
-  app.action(GATHER_DINNER_CLUB, async (argument) => {
-    await argument.ack();
+  await requestGather(requestBody);
+};
 
-    const body = argument.body as BlockAction;
-    const payload = argument.payload as MultiStaticSelectAction;
+app.action(
+  GATHER_LUNCH_CLUB,
+  async (argument: SlackActionMiddlewareArgs<BlockAction>) => {
+    await handleGatherAction(argument);
+  }
+);
 
-    const requestBody = JSON.stringify({
-      payload: [
-        body.user.name,
-        body.user.id,
-        body.channel!.name,
-        ...payload.selected_options.map((option) => option.value),
-      ],
-    });
+app.action(
+  GATHER_DINNER_CLUB,
+  async (argument: SlackActionMiddlewareArgs<BlockAction>) => {
+    await handleGatherAction(argument);
+  }
+);
 
-    await requestGather(requestBody);
-  });
+// lunchClub.sendGatherMessage();
+// dinnerClub.sendGatherMessage();
 
-  await lunchClub.sendGatherMessage();
-  await dinnerClub.sendGatherMessage();
-})();
+module.exports.handler = handler;
