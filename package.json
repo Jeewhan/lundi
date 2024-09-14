@@ -17,6 +17,8 @@
   },
   "devDependencies": {
     "@types/node": "^22.5.4",
+    "serverless-dotenv-plugin": "^6.0.0",
+    "serverless-offline": "^13.8.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.2"
   }
