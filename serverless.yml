@@ -1,0 +1,36 @@
+# 원하는 서비스 이름 작성
+service: serverless-bolt-js
+frameworkVersion: "3"
+provider:
+  name: aws
+  # 원하는 배포 환경 이름을 CLI로 받기 위한 옵션, 디폴트는 dev
+  stage: ${opt:stage, 'dev'}
+  runtime: nodejs20.x
+  deploymentMethod: direct
+  region: ap-northeast-2
+functions:
+  slack:
+    # Lambda 함수의 진입점
+    # 현재 프로젝트는 TypeScript로 작성되어 있으므로 dist 폴더에 컴파일된 파일이 있음
+    # 만약 JavaScript로 작성되어 있다면 해당 프로젝트 내 Lambda 함수 진입점을 설정
+    handler: dist/app.handler
+    events:
+      - http:
+          path: slack/events
+          method: post
+plugins:
+  # 로컬에서 Lambda 함수를 테스트하기 위한 플러그인
+  - serverless-offline
+  # 환경 변수를 .env 파일로 설정하기 위한 플러그인
+  - serverless-dotenv-plugin
+# .env 파일을 사용할지 여부
+useDotenv: true
+# 각 플러그인에서 추가로 설정할 옵션들
+custom:
+  serverless-offline:
+    # 디폴트로 엔드포인트에 환경 이름이 붙는데 이를 비활성화
+    noPrependStageInUrl: true
+  dotenv:
+    # .env 파일에 포함시키지 않을 환경 변수
+    exclude:
+      - GITHUB_TOKEN
