@@ -5,7 +5,9 @@
   "scripts": {
     "build": "tsc -p .",
     "build:watch": "tsc -w -p .",
-    "start": "npm run build && node dist/app.js"
+    "start": "npm run build && node dist/app.js",
+    "deploy:dev": "NODE_ENV=development sls deploy --verbose --region ap-northeast-2",
+    "deploy:production": "NODE_ENV=production sls deploy --stage production --verbose --region ap-northeast-2"
   },
   "keywords": [],
   "author": "",
