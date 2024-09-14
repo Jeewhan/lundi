@@ -12,6 +12,13 @@ import DinnerClub from "./controllers/dinner-club";
 import Slack from "./services/slack";
 import { GATHER_DINNER_CLUB, GATHER_LUNCH_CLUB } from "./constants";
 
+const requestGather = async (body: BodyInit) => {
+  await fetch(process.env.APPS_SCRIPT_API_URL as string, {
+    method: "POST",
+    body,
+  });
+};
+
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
   signingSecret: process.env.SLACK_SIGNING_SECRET,
@@ -44,7 +51,7 @@ const app = new App({
       ],
     });
 
-    await lunchClub.requestGather(requestBody);
+    await requestGather(requestBody);
   });
 
   app.action(GATHER_DINNER_CLUB, async (argument) => {
@@ -62,7 +69,7 @@ const app = new App({
       ],
     });
 
-    await dinnerClub.requestGather(requestBody);
+    await requestGather(requestBody);
   });
 
   await lunchClub.sendGatherMessage();
