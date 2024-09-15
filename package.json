@@ -3,12 +3,15 @@
   "version": "1.0.0",
   "main": "dist/app.js",
   "scripts": {
-    "build": "tsc -p .",
-    "build:watch": "tsc -w -p .",
-    "start": "npm run build && node dist/app.js",
-    "deploy:dev": "NODE_ENV=development sls deploy --verbose --region ap-northeast-2",
-    "deploy:production": "NODE_ENV=production sls deploy --stage production --verbose --region ap-northeast-2",
-    "local": "tsc -p . && node dist/local.js"
+    "build": "esbuild src/app.ts --bundle --sourcemap --platform=node --outfile=dist/app.js",
+    "build:watch": "esbuild src/app.ts --bundle --sourcemap --platform=node --outfile=dist/app.js --watch",
+    "type-check": "tsc --noEmit",
+    "type-check:watch": "tsc --noEmit --watch",
+    "dev": "concurrently -n \"build,type-check\" -c \"blue,green\" \"npm run build:watch\" \"npm run type-check:watch\"",
+    "start": "node dist/app.js",
+    "deploy:dev": "npm run build && NODE_ENV=development sls deploy --verbose --region ap-northeast-2",
+    "deploy:production": "npm run build && NODE_ENV=production sls deploy --stage production --verbose --region ap-northeast-2",
+    "local": "tsx src/local.ts"
   },
   "keywords": [],
   "author": "",
@@ -20,9 +23,11 @@
   },
   "devDependencies": {
     "@types/node": "^22.5.4",
+    "concurrently": "^8.2.0",
+    "esbuild": "^0.19.0",
     "serverless-dotenv-plugin": "^6.0.0",
     "serverless-offline": "^13.8.0",
-    "ts-node": "^10.9.2",
+    "tsx": "^4.0.0",
     "typescript": "^5.6.2"
   }
 }
