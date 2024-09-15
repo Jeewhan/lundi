@@ -46,11 +46,12 @@ const handler = async (
 
 app.action(
   GATHER_LUNCH_CLUB,
-  async (argument: SlackActionMiddlewareArgs<BlockAction>) => {
-    await argument.ack();
-
-    const body = argument.body as BlockAction;
-    const action = argument.action as ButtonAction;
+  async ({
+    ack,
+    body,
+    action,
+  }: SlackActionMiddlewareArgs<BlockAction<ButtonAction>>) => {
+    await ack();
 
     const requestBody = JSON.stringify({
       payload: [body.user.id, action.action_id, action.value],
@@ -73,11 +74,12 @@ app.action(
 
 app.action(
   GATHER_DINNER_CLUB,
-  async (argument: SlackActionMiddlewareArgs<BlockAction>) => {
-    await argument.ack();
-
-    const body = argument.body as BlockAction;
-    const payload = argument.payload as MultiStaticSelectAction;
+  async ({
+    ack,
+    body,
+    payload,
+  }: SlackActionMiddlewareArgs<BlockAction<MultiStaticSelectAction>>) => {
+    await ack();
 
     const requestBody = JSON.stringify({
       payload: [
