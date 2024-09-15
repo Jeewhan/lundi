@@ -53,13 +53,7 @@ app.action(
     const action = argument.action as ButtonAction;
 
     const requestBody = JSON.stringify({
-      payload: [
-        body.user.name,
-        body.user.id,
-        body.channel!.name,
-        action.action_id,
-        action.value,
-      ],
+      payload: [body.user.id, action.action_id, action.value],
     });
 
     await requestGather(requestBody);
@@ -87,9 +81,7 @@ app.action(
 
     const requestBody = JSON.stringify({
       payload: [
-        body.user.name,
         body.user.id,
-        body.channel!.name,
         payload.action_id,
         payload.selected_options.map((option) => option.value).join(", "),
       ],

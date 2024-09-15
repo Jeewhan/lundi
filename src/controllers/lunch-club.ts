@@ -1,16 +1,17 @@
-import Slack from "../services/slack";
+import { App } from "@slack/bolt";
+
 import { GATHER_LUNCH_CLUB } from "../constants";
 import { createBlocks } from "../utils/slack";
 
 class LunchClub {
-  constructor(private readonly messenger: Slack) {}
+  constructor(private readonly messenger: App) {}
 
   public async sendGatherMessage() {
-    await this.messenger.postMessage(
-      process.env.SLACK_LUNCH_CHANNEL as string,
-      "런치클럽🍜 참가신청을 받습니다!",
-      createBlocks(gatherText, gatherActionOptions)
-    );
+    await this.messenger.client.chat.postMessage({
+      channel: process.env.SLACK_LUNCH_CHANNEL as string,
+      text: "런치클럽🍜 참가신청을 받습니다!",
+      blocks: createBlocks(gatherText, gatherActionOptions),
+    });
   }
 }
 
@@ -29,7 +30,7 @@ const gatherText = `런치클럽🍜 참가신청을 받습니다!
 
 ⚠️ 이번 기수에는 1,2차 매칭을 한 번에 진행해요.
 
-✅ 참여 방법: 런치 매칭에 참여 원하실 경우 아래⬇️ '참가신청'을 체크해주세요.`;
+✅ 참여 방법: 런치 매칭에 참여 원하실 경우 아래⬇️ '참가신청'을 눌러주세요.`;
 
 const gatherActionOptions = [
   {

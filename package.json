@@ -8,7 +8,7 @@
     "start": "npm run build && node dist/app.js",
     "deploy:dev": "NODE_ENV=development sls deploy --verbose --region ap-northeast-2",
     "deploy:production": "NODE_ENV=production sls deploy --stage production --verbose --region ap-northeast-2",
-    "local": "ts-node src/local.ts && node dist/local.js"
+    "local": "tsc -p . && node dist/local.js"
   },
   "keywords": [],
   "author": "",
