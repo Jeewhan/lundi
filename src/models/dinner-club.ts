@@ -1,17 +1,16 @@
-import { App } from "@slack/bolt";
-
 import { GATHER_DINNER_CLUB } from "../constants";
 import { createBlocks } from "../utils/slack";
+import Slack from "../services/messenger";
 
 class DinnerClub {
-  constructor(private readonly slack: App) {}
+  constructor(private readonly slack: Slack) {}
 
   public async sendGatherMessage() {
-    await this.slack.client.chat.postMessage({
-      channel: process.env.SLACK_DINNER_CHANNEL as string,
-      text: "디너클럽🍜 참가신청을 받습니다!",
-      blocks: createBlocks(gatherText, gatherActionOptions),
-    });
+    await this.slack.post(
+      process.env.SLACK_DINNER_CHANNEL as string,
+      "디너클럽🍜 참가신청을 받습니다!",
+      createBlocks(gatherText, gatherActionOptions)
+    );
   }
 }
 
@@ -35,6 +34,7 @@ const gatherText = `디너클럽🍜 참가신청을 받습니다!
 알림을 못 받으셨을 경우, 다시 한 번 시도해 주세요.
 만약 그래도 잘 되지 않을 경우 해당 신청 메세지 댓글(스레드)에 남겨주세요.
 `;
+
 const gatherActionOptions = [
   {
     type: "section",

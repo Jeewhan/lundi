@@ -1,17 +1,16 @@
-import { App } from "@slack/bolt";
-
 import { GATHER_LUNCH_CLUB } from "../constants";
 import { createBlocks } from "../utils/slack";
+import Slack from "../services/messenger";
 
 class LunchClub {
-  constructor(private readonly slack: App) {}
+  constructor(private readonly slack: Slack) {}
 
   public async sendGatherMessage() {
-    await this.slack.client.chat.postMessage({
-      channel: process.env.SLACK_LUNCH_CHANNEL as string,
-      text: "런치클럽🍜 참가신청을 받습니다!",
-      blocks: createBlocks(gatherText, gatherActionOptions),
-    });
+    await this.slack.post(
+      process.env.SLACK_LUNCH_CHANNEL as string,
+      "런치클럽🍜 참가신청을 받습니다!",
+      createBlocks(gatherText, gatherActionOptions)
+    );
   }
 }
 

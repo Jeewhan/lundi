@@ -15,6 +15,7 @@ import {
 } from "@slack/bolt/dist/receivers/AwsLambdaReceiver";
 
 import { GATHER_DINNER_CLUB, GATHER_LUNCH_CLUB } from "./constants";
+import Slack from "./services/messenger";
 
 const requestGather = async (body: BodyInit) => {
   await fetch(process.env.APPS_SCRIPT_API_URL as string, {
@@ -34,6 +35,8 @@ const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
   receiver: awsLambdaReceiver,
 });
+
+const slack = new Slack(app);
 
 const handler = async (
   event: AwsEvent,
@@ -59,16 +62,10 @@ app.action(
 
     await requestGather(requestBody);
 
-    const { channel } = await app.client.conversations.open({
-      users: body.user.id,
-    });
-
-    if (channel?.id) {
-      await app.client.chat.postMessage({
-        channel: channel.id,
-        text: `----- 런치클럽 참여신청이 완료되었습니다.`,
-      });
-    }
+    await slack.direct(
+      [body.user.id],
+      "----- 런치클럽 참여신청이 완료되었습니다."
+    );
   }
 );
 
@@ -91,18 +88,12 @@ app.action(
 
     await requestGather(requestBody);
 
-    const { channel } = await app.client.conversations.open({
-      users: body.user.id,
-    });
-
-    if (channel?.id) {
-      await app.client.chat.postMessage({
-        channel: channel.id,
-        text: `----- 디너클럽 참여신청이 완료되었습니다. ${payload.selected_options
-          .map((option) => option.value)
-          .join(", ")}`,
-      });
-    }
+    await slack.direct(
+      [body.user.id],
+      `----- 디너클럽 참여신청이 완료되었습니다. ${payload.selected_options
+        .map((option) => option.value)
+        .join(", ")}`
+    );
   }
 );
 

@@ -11,7 +11,7 @@
     "start": "node dist/app.js",
     "deploy:dev": "npm run build && NODE_ENV=development sls deploy --verbose --region ap-northeast-2",
     "deploy:production": "npm run build && NODE_ENV=production sls deploy --stage production --verbose --region ap-northeast-2",
-    "local": "tsx src/local.ts"
+    "push": "tsx src/push.ts"
   },
   "keywords": [],
   "author": "",
