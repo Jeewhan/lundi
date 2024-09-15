@@ -4,10 +4,10 @@ import { GATHER_LUNCH_CLUB } from "../constants";
 import { createBlocks } from "../utils/slack";
 
 class LunchClub {
-  constructor(private readonly messenger: App) {}
+  constructor(private readonly slack: App) {}
 
   public async sendGatherMessage() {
-    await this.messenger.client.chat.postMessage({
+    await this.slack.client.chat.postMessage({
       channel: process.env.SLACK_LUNCH_CHANNEL as string,
       text: "런치클럽🍜 참가신청을 받습니다!",
       blocks: createBlocks(gatherText, gatherActionOptions),
