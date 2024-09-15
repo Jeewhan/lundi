@@ -26,19 +26,27 @@ const gatherText = `디너클럽🍜 참가신청을 받습니다!
 🍕최종 매칭: 일요일(9/22) 중
 
 💬매칭 방식: 슬랙 그룹톡방 개설
+
+참여 일정 4개 체크 시 : 1~4번의 매칭 가능
+참여 일정 2개 체크 시: 1~2번의 매칭 가능
+참여 일정 1개 체크 시 : 1번의 매칭 가능
+
+🔔정상적으로 신청이 되면, <@${process.env.LUNDI_USER_ID}> 앱으로부터 완료되었다는 알림이 오게 됩니다.
+알림을 못 받으셨을 경우, 다시 한 번 시도해 주세요.
+만약 그래도 잘 되지 않을 경우 해당 신청 메세지 댓글(스레드)에 남겨주세요.
 `;
 const gatherActionOptions = [
   {
     type: "section",
     text: {
       type: "mrkdwn",
-      text: "참여희망일을 선택해주세요.",
+      text: "참여희망일",
     },
     accessory: {
       type: "multi_static_select",
       placeholder: {
         type: "plain_text",
-        text: "참여희망일",
+        text: "이 곳을 눌러 참여 가능한 일자를 모두 선택해주세요.",
         emoji: true,
       },
       options: [
