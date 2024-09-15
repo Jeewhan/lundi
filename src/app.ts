@@ -49,12 +49,12 @@ app.action(
   async ({
     ack,
     body,
-    action,
+    payload,
   }: SlackActionMiddlewareArgs<BlockAction<ButtonAction>>) => {
     await ack();
 
     const requestBody = JSON.stringify({
-      payload: [body.user.id, action.action_id, action.value],
+      payload: [body.user.id, payload.action_id, payload.value],
     });
 
     await requestGather(requestBody);
