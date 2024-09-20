@@ -19,7 +19,10 @@ export default class ClubMember {
   }
 
   public isEligibleForLunch(): boolean {
-    return this.clubType === "lunch" || this.clubType === "lunch-dinner";
+    return (
+      (this.clubType === "lunch" || this.clubType === "lunch-dinner") &&
+      this.hasAppliedForLunch
+    );
   }
 
   public isEligibleForDinner(): boolean {

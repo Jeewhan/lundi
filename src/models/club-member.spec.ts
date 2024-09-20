@@ -38,10 +38,15 @@ describe("ClubMember", () => {
     const dinnerMember = generateMockClubMemberBy("dinner");
     const lunchDinnerMember = generateMockClubMemberBy("lunch-dinner");
 
+    // when
+    lunchMember.hasAppliedForLunch = true;
+    dinnerMember.hasAppliedForLunch = true;
+    lunchDinnerMember.hasAppliedForLunch = false;
+
     // then
     expect(lunchMember.isEligibleForLunch()).toBe(true);
     expect(dinnerMember.isEligibleForLunch()).toBe(false);
-    expect(lunchDinnerMember.isEligibleForLunch()).toBe(true);
+    expect(lunchDinnerMember.isEligibleForLunch()).toBe(false);
   });
 
   test("isEligibleForDinner", () => {
