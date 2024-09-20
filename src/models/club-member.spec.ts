@@ -24,6 +24,14 @@ describe("ClubMember", () => {
     expectTypeOf(member).toMatchTypeOf<ClubMember>();
   });
 
+  test("get dinnerPreferredDateTimeList", () => {
+    // given
+    const member = generateMockClubMemberBy("lunch-dinner");
+
+    // then
+    expect(member.dinnerPreferredDateTimeList).toBeInstanceOf(Array);
+  });
+
   test("isEligibleForLunch", () => {
     // given
     const lunchMember = generateMockClubMemberBy("lunch");
