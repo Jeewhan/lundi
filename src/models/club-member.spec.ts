@@ -97,7 +97,7 @@ const generateMockClubMemberBy = (
     clubType,
     generateGroupMembers(),
     generateExcludedMembers(),
-    generateKeywords(),
+    generateLunchClubKeywords(),
     generateDinnerClubLocations(clubType),
     generateHasAppliedForLunch(clubType),
     generateDinnerPreferredDateTime(clubType)
@@ -134,7 +134,7 @@ const generateExcludedMembers = (): string => {
   ).join(", ");
 };
 
-const generateKeywords = (): string => {
+const generateLunchClubKeywords = (): string => {
   const selectedKeywords = faker.helpers.arrayElements(keywords, {
     min: 0,
     max: keywords.length,

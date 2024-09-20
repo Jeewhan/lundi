@@ -8,7 +8,7 @@ export default class ClubMember {
     public clubType: (typeof clubTypes)[number],
     public groupMembers: string,
     public excludedMembers: string,
-    public keywords: string,
+    public lunchClubKeywords: string,
     public dinnerClubLocations: string,
     public hasAppliedForLunch: boolean,
     public dinnerPreferredDateTime: string
