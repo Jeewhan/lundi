@@ -17,6 +17,14 @@ export default class ClubMember {
   get dinnerPreferredDateTimeList(): string[] {
     return this.dinnerPreferredDateTime.split(", ");
   }
+
+  public isEligibleForLunch(): boolean {
+    return this.clubType === "lunch" || this.clubType === "lunch-dinner";
+  }
+
+  public isEligibleForDinner(): boolean {
+    return this.clubType === "dinner" || this.clubType === "lunch-dinner";
+  }
 }
 
 export const clubTypes = ["lunch", "dinner", "lunch-dinner"] as const;

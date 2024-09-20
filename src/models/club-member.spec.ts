@@ -23,6 +23,30 @@ describe("ClubMember", () => {
     // then
     expectTypeOf(member).toMatchTypeOf<ClubMember>();
   });
+
+  test("isEligibleForLunch", () => {
+    // given
+    const lunchMember = generateMockClubMemberBy("lunch");
+    const dinnerMember = generateMockClubMemberBy("dinner");
+    const lunchDinnerMember = generateMockClubMemberBy("lunch-dinner");
+
+    // then
+    expect(lunchMember.isEligibleForLunch()).toBe(true);
+    expect(dinnerMember.isEligibleForLunch()).toBe(false);
+    expect(lunchDinnerMember.isEligibleForLunch()).toBe(true);
+  });
+
+  test("isEligibleForDinner", () => {
+    // given
+    const lunchMember = generateMockClubMemberBy("lunch");
+    const dinnerMember = generateMockClubMemberBy("dinner");
+    const lunchDinnerMember = generateMockClubMemberBy("lunch-dinner");
+
+    // then
+    expect(lunchMember.isEligibleForDinner()).toBe(false);
+    expect(dinnerMember.isEligibleForDinner()).toBe(true);
+    expect(lunchDinnerMember.isEligibleForDinner()).toBe(true);
+  });
 });
 
 const generateMockClubMemberBy = (
