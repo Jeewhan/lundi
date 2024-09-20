@@ -26,6 +26,10 @@ export default class ClubMember {
     return this.clubType === "dinner" || this.clubType === "lunch-dinner";
   }
 
+  public isPersonInGroup(name: ClubMember["name"]): boolean {
+    return this.groupMembers.includes(name);
+  }
+
   public isPersonExcluded(name: ClubMember["name"]): boolean {
     return this.exclude.includes(name);
   }
