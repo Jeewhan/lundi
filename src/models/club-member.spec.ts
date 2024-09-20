@@ -55,6 +55,20 @@ describe("ClubMember", () => {
     expect(dinnerMember.isEligibleForDinner()).toBe(true);
     expect(lunchDinnerMember.isEligibleForDinner()).toBe(true);
   });
+
+  test("isPersonExcluded", () => {
+    // given
+    const a = generateMockClubMemberBy("lunch-dinner");
+    const b = generateMockClubMemberBy("lunch-dinner");
+    const c = generateMockClubMemberBy("lunch-dinner");
+
+    // when
+    a.exclude = a.exclude.split(", ").concat(b.name).join(", ");
+
+    // then
+    expect(a.isPersonExcluded(b.name)).toBe(true);
+    expect(a.isPersonExcluded(c.name)).toBe(false);
+  });
 });
 
 const generateMockClubMemberBy = (

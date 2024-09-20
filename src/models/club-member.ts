@@ -25,6 +25,10 @@ export default class ClubMember {
   public isEligibleForDinner(): boolean {
     return this.clubType === "dinner" || this.clubType === "lunch-dinner";
   }
+
+  public isPersonExcluded(name: ClubMember["name"]): boolean {
+    return this.exclude.includes(name);
+  }
 }
 
 export const clubTypes = ["lunch", "dinner", "lunch-dinner"] as const;
