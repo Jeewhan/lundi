@@ -19,10 +19,19 @@ export default class ClubMember {
   }
 
   public isEligibleForLunch(): boolean {
-    return (
-      (this.clubType === "lunch" || this.clubType === "lunch-dinner") &&
-      this.hasAppliedForLunch
-    );
+    if (this.clubType === "dinner") {
+      return false;
+    }
+
+    if (!this.hasAppliedForLunch) {
+      return false;
+    }
+
+    if (this.lunchClubKeywords.trim().length === 0) {
+      throw new Error(`${this.name}님의 lunchClubKeywords가 누락되었습니다.`);
+    }
+
+    return true;
   }
 
   public isEligibleForDinner(): boolean {
