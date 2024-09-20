@@ -26,10 +26,15 @@ describe("ClubMember", () => {
 
   test("get dinnerPreferredDateTimeList", () => {
     // given
-    const member = generateMockClubMemberBy("lunch-dinner");
+    const a = generateMockClubMemberBy("lunch-dinner");
+    const b = generateMockClubMemberBy("lunch-dinner");
+
+    // when
+    b.dinnerPreferredDateTime = "";
 
     // then
-    expect(member.dinnerPreferredDateTimeList).toBeInstanceOf(Array);
+    expect(a.dinnerPreferredDateTimeList).toBeInstanceOf(Array);
+    expect(b.dinnerPreferredDateTimeList).toEqual([]);
   });
 
   test("isEligibleForLunch", () => {

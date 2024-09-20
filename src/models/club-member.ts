@@ -15,6 +15,10 @@ export default class ClubMember {
   ) {}
 
   get dinnerPreferredDateTimeList(): string[] {
+    if (!this.dinnerPreferredDateTime.trim()) {
+      return [];
+    }
+
     return this.dinnerPreferredDateTime.split(", ");
   }
 
