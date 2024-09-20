@@ -98,10 +98,7 @@ const generateMockClubMemberBy = (
     generateGroupMembers(),
     generateExcludedMembers(),
     generateKeywords(),
-    faker.helpers.arrayElements(regions, {
-      min: 0,
-      max: regions.length,
-    }),
+    generateRegion(clubType),
     generateHasAppliedForLunch(clubType),
     generateDinnerPreferredDateTime(clubType)
   );
@@ -144,6 +141,19 @@ const generateKeywords = (): string => {
   });
 
   return selectedKeywords.join(", ");
+};
+
+const generateRegion = (clubType: (typeof clubTypes)[number]): string => {
+  if (clubType === "lunch") {
+    return "";
+  }
+
+  return faker.helpers
+    .arrayElements(regions, {
+      min: 1,
+      max: regions.length,
+    })
+    .join(", ");
 };
 
 const generateHasAppliedForLunch = (

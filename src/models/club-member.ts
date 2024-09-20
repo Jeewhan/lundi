@@ -9,7 +9,7 @@ export default class ClubMember {
     public groupMembers: string,
     public excludedMembers: string,
     public keywords: string,
-    public region: Region[],
+    public region: string,
     public hasAppliedForLunch: boolean,
     public dinnerPreferredDateTime: string
   ) {}
@@ -121,6 +121,3 @@ export const dinnerPreferredDateTimes = [
   "20241025 19:00",
   "20241026 18:00",
 ];
-
-type Region = (typeof regions)[number];
-type Keyword = (typeof keywords)[number];
