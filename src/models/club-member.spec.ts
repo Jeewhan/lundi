@@ -98,7 +98,7 @@ const generateMockClubMemberBy = (
     generateGroupMembers(),
     generateExcludedMembers(),
     generateKeywords(),
-    generateRegion(clubType),
+    generateDinnerClubLocations(clubType),
     generateHasAppliedForLunch(clubType),
     generateDinnerPreferredDateTime(clubType)
   );
@@ -143,7 +143,9 @@ const generateKeywords = (): string => {
   return selectedKeywords.join(", ");
 };
 
-const generateRegion = (clubType: (typeof clubTypes)[number]): string => {
+const generateDinnerClubLocations = (
+  clubType: (typeof clubTypes)[number]
+): string => {
   if (clubType === "lunch") {
     return "";
   }

@@ -9,7 +9,7 @@ export default class ClubMember {
     public groupMembers: string,
     public excludedMembers: string,
     public keywords: string,
-    public region: string,
+    public dinnerClubLocations: string,
     public hasAppliedForLunch: boolean,
     public dinnerPreferredDateTime: string
   ) {}
