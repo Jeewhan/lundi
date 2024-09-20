@@ -16,16 +16,18 @@ const faker = new Faker({
 describe("ClubMember", () => {
   test("constructor", () => {
     // given
-    const member = generateMockClubMember();
+    const member = generateMockClubMemberBy(
+      faker.helpers.arrayElement(clubTypes)
+    );
 
     // then
     expectTypeOf(member).toMatchTypeOf<ClubMember>();
   });
 });
 
-const generateMockClubMember = (): ClubMember => {
-  const clubType = faker.helpers.arrayElement(clubTypes);
-
+const generateMockClubMemberBy = (
+  clubType: (typeof clubTypes)[number]
+): ClubMember => {
   return new ClubMember(
     faker.person.fullName(),
     `U${faker.string.alphanumeric({ length: 10, casing: "upper" })}`,
