@@ -49,6 +49,15 @@ export default class ClubMember {
   public isPersonExcluded(name: ClubMember["name"]): boolean {
     return this.excludedMembers.includes(name);
   }
+
+  public hasMatchingLunchClubKeywords(
+    lunchClubKeywords: ClubMember["lunchClubKeywords"]
+  ) {
+    const keywords = this.lunchClubKeywords.split(", ");
+    const otherKeywords = lunchClubKeywords.split(", ");
+
+    return keywords.filter((keyword) => otherKeywords.includes(keyword)).length;
+  }
 }
 
 export const clubTypes = ["lunch", "dinner", "lunch-dinner"] as const;

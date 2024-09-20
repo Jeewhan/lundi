@@ -93,6 +93,30 @@ describe("ClubMember", () => {
     expect(a.isPersonExcluded(b.name)).toBe(true);
     expect(a.isPersonExcluded(c.name)).toBe(false);
   });
+
+  test("hasMatchingLunchClubKeywords", () => {
+    // given
+    const a = generateMockClubMemberBy("lunch-dinner");
+    const b = generateMockClubMemberBy("lunch-dinner");
+    const c = generateMockClubMemberBy("lunch-dinner");
+    const d = generateMockClubMemberBy("lunch-dinner");
+
+    // when
+    a.lunchClubKeywords = "마케팅/브랜딩";
+    b.lunchClubKeywords = "마케팅/브랜딩, 창업/비즈니스";
+
+    c.lunchClubKeywords = "창업/비즈니스";
+    d.lunchClubKeywords = "커리어";
+
+    // then
+    expect(
+      a.hasMatchingLunchClubKeywords(b.lunchClubKeywords)
+    ).toBeGreaterThanOrEqual(1);
+    expect(
+      b.hasMatchingLunchClubKeywords(c.lunchClubKeywords)
+    ).toBeGreaterThanOrEqual(1);
+    expect(c.hasMatchingLunchClubKeywords(d.lunchClubKeywords)).toBeLessThan(1);
+  });
 });
 
 const generateMockClubMemberBy = (
