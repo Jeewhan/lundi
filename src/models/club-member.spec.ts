@@ -122,6 +122,95 @@ describe("ClubMember", () => {
     ).toBeGreaterThanOrEqual(1);
     expect(c.hasMatchingLunchClubKeywords(d.lunchClubKeywords)).toBeLessThan(1);
   });
+
+  describe("canMatchForLunchWith", () => {
+    test("매칭 성공", () => {
+      // given
+      const a = generateMockClubMemberBy("lunch-dinner");
+      const b = generateMockClubMemberBy("lunch-dinner");
+
+      // when
+      a.hasAppliedForLunch = true;
+      b.hasAppliedForLunch = true;
+
+      a.lunchClubKeywords = "마케팅/브랜딩";
+      b.lunchClubKeywords = "마케팅/브랜딩, 창업/비즈니스";
+
+      expect(a.canMatchForLunchWith(b)).toBe(true);
+    });
+
+    test("다른 한 명은 dinner만 신청했다.", () => {
+      // given
+      const a = generateMockClubMemberBy("lunch-dinner");
+      const b = generateMockClubMemberBy("dinner");
+
+      // when
+      a.hasAppliedForLunch = true;
+      b.hasAppliedForLunch = false;
+
+      // then
+      expect(a.canMatchForLunchWith(b)).toBe(false);
+    });
+
+    test("서로가 그룹에 있다.", () => {
+      // given
+      const a = generateMockClubMemberBy("lunch-dinner");
+      const b = generateMockClubMemberBy("lunch-dinner");
+
+      // when
+      a.groupMembers = a.groupMembers.split(", ").concat(b.name).join(", ");
+
+      // then
+      expect(a.canMatchForLunchWith(b)).toBe(false);
+    });
+
+    test("서로가 서로를 제외한다.", () => {
+      // given
+      const a = generateMockClubMemberBy("lunch-dinner");
+      const b = generateMockClubMemberBy("lunch-dinner");
+
+      // when
+      a.excludedMembers = a.excludedMembers
+        .split(", ")
+        .concat(b.name)
+        .join(", ");
+
+      // then
+      expect(a.canMatchForLunchWith(b)).toBe(false);
+    });
+
+    test("한 명만 다른 한 명을 제외한다.", () => {
+      // given
+      const a = generateMockClubMemberBy("lunch-dinner");
+      const b = generateMockClubMemberBy("lunch-dinner");
+      const c = generateMockClubMemberBy("lunch-dinner");
+
+      // when
+      a.excludedMembers = a.excludedMembers
+        .split(", ")
+        .concat(b.name)
+        .join(", ");
+
+      // then
+      expect(a.canMatchForLunchWith(b)).toBe(false);
+    });
+
+    test("서로의 관심사가 다르다.", () => {
+      // given
+      const a = generateMockClubMemberBy("lunch-dinner");
+      const b = generateMockClubMemberBy("lunch-dinner");
+
+      // when
+      a.hasAppliedForLunch = true;
+      b.hasAppliedForLunch = true;
+
+      a.lunchClubKeywords = "마케팅/브랜딩";
+      b.lunchClubKeywords = "창업/비즈니스";
+
+      // then
+      expect(a.canMatchForLunchWith(b)).toBe(false);
+    });
+  });
 });
 
 const generateMockClubMemberBy = (

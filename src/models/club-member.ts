@@ -54,6 +54,17 @@ export default class ClubMember {
 
     return keywords.filter((keyword) => otherKeywords.includes(keyword)).length;
   }
+
+  public canMatchForLunchWith(member: ClubMember): boolean {
+    return (
+      this.isEligibleForLunch() &&
+      member.isEligibleForLunch() &&
+      !this.isPersonInGroup(member.name) &&
+      !this.isPersonExcluded(member.name) &&
+      !member.isPersonExcluded(this.name) &&
+      this.hasMatchingLunchClubKeywords(member.lunchClubKeywords) > 0
+    );
+  }
 }
 
 export const clubTypes = ["lunch", "dinner", "lunch-dinner"] as const;
