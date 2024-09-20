@@ -7,7 +7,7 @@ export default class ClubMember {
     public introduce: string,
     public clubType: (typeof clubTypes)[number],
     public groupMembers: string,
-    public exclude: string,
+    public excludedMembers: string,
     public keywords: string,
     public region: Region[],
     public hasAppliedForLunch: boolean,
@@ -31,7 +31,7 @@ export default class ClubMember {
   }
 
   public isPersonExcluded(name: ClubMember["name"]): boolean {
-    return this.exclude.includes(name);
+    return this.excludedMembers.includes(name);
   }
 }
 

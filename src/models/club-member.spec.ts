@@ -77,7 +77,7 @@ describe("ClubMember", () => {
     const c = generateMockClubMemberBy("lunch-dinner");
 
     // when
-    a.exclude = a.exclude.split(", ").concat(b.name).join(", ");
+    a.excludedMembers = a.excludedMembers.split(", ").concat(b.name).join(", ");
 
     // then
     expect(a.isPersonExcluded(b.name)).toBe(true);
@@ -96,7 +96,7 @@ const generateMockClubMemberBy = (
     generateIntroduce(),
     clubType,
     generateGroupMembers(),
-    generateExclude(),
+    generateExcludedMembers(),
     generateKeywords(),
     faker.helpers.arrayElements(regions, {
       min: 0,
@@ -131,7 +131,7 @@ const generateGroupMembers = (): string => {
   ).join(", ");
 };
 
-const generateExclude = (): string => {
+const generateExcludedMembers = (): string => {
   return Array.from({ length: faker.number.int({ min: 0, max: 32 }) }, () =>
     faker.person.fullName()
   ).join(", ");
