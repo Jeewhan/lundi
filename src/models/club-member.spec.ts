@@ -30,6 +30,8 @@ describe("ClubMember", () => {
     const b = generateMockClubMemberBy("lunch-dinner");
 
     // when
+    a.dinnerPreferredDateTime =
+      "20241004 19:00, 20241005 18:00, 20241025 19:00, 20241026 18:00";
     b.dinnerPreferredDateTime = "";
 
     // then
@@ -46,12 +48,15 @@ describe("ClubMember", () => {
     // when
     lunchMember.hasAppliedForLunch = true;
     dinnerMember.hasAppliedForLunch = true;
-    lunchDinnerMember.hasAppliedForLunch = false;
+    lunchDinnerMember.hasAppliedForLunch = true;
+    lunchDinnerMember.lunchClubKeywords = "";
 
     // then
     expect(lunchMember.isEligibleForLunch()).toBe(true);
     expect(dinnerMember.isEligibleForLunch()).toBe(false);
-    expect(lunchDinnerMember.isEligibleForLunch()).toBe(false);
+    expect(() => lunchDinnerMember.isEligibleForLunch()).toThrowError(
+      /lunchClubKeywords가 누락되었습니다./
+    );
   });
 
   test("isEligibleForDinner", () => {

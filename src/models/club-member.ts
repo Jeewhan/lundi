@@ -27,15 +27,11 @@ export default class ClubMember {
       return false;
     }
 
-    if (!this.hasAppliedForLunch) {
-      return false;
-    }
-
-    if (this.lunchClubKeywords.trim().length === 0) {
+    if (this.hasAppliedForLunch && this.lunchClubKeywords.trim().length === 0) {
       throw new Error(`${this.name}님의 lunchClubKeywords가 누락되었습니다.`);
     }
 
-    return true;
+    return this.hasAppliedForLunch;
   }
 
   public isEligibleForDinner(): boolean {
