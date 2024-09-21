@@ -11,6 +11,23 @@ export const regions = [
   "성수",
 ] as const;
 
+export const keywords = [
+  "마케팅/브랜딩",
+  "IT/AI",
+  "창업/비즈니스",
+  "커리어",
+  "부업/사이드프로젝트",
+  "취미/일상/콘텐츠",
+  "해외/여행",
+] as const;
+
+export const dinnerPreferredDateTimes = [
+  "20241004 19:00",
+  "20241005 18:00",
+  "20241025 19:00",
+  "20241026 18:00",
+];
+
 export const groups = [
   "회고_off_리유니언_배려",
   "회고_off_리유니언_현재",
@@ -70,20 +87,3 @@ export const groups = [
   "회고_so_풍요",
   "회고_so_하늘",
 ] as const;
-
-export const keywords = [
-  "마케팅/브랜딩",
-  "IT/AI",
-  "창업/비즈니스",
-  "커리어",
-  "부업/사이드프로젝트",
-  "취미/일상/콘텐츠",
-  "해외/여행",
-] as const;
-
-export const dinnerPreferredDateTimes = [
-  "20241004 19:00",
-  "20241005 18:00",
-  "20241025 19:00",
-  "20241026 18:00",
-];

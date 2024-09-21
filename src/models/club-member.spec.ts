@@ -1,7 +1,7 @@
 import { describe, test, expect, expectTypeOf } from "vitest";
 
 import ClubMember from "./club-member";
-import { clubTypes } from "../constants";
+import { clubTypes, dinnerPreferredDateTimes, keywords } from "../constants";
 import { faker, generateMockClubMemberBy } from "../utils/mock";
 
 describe("ClubMember", () => {
@@ -21,8 +21,7 @@ describe("ClubMember", () => {
     const b = generateMockClubMemberBy("lunch-dinner");
 
     // when
-    a.dinnerPreferredDateTime =
-      "20241004 19:00, 20241005 18:00, 20241025 19:00, 20241026 18:00";
+    a.dinnerPreferredDateTime = dinnerPreferredDateTimes.join(", ");
     b.dinnerPreferredDateTime = "";
 
     // then
@@ -98,11 +97,11 @@ describe("ClubMember", () => {
     const d = generateMockClubMemberBy("lunch-dinner");
 
     // when
-    a.lunchClubKeywords = "마케팅/브랜딩";
-    b.lunchClubKeywords = "마케팅/브랜딩, 창업/비즈니스";
+    a.lunchClubKeywords = keywords[0];
+    b.lunchClubKeywords = [keywords[0], keywords[1]].join(", ");
 
-    c.lunchClubKeywords = "창업/비즈니스";
-    d.lunchClubKeywords = "커리어";
+    c.lunchClubKeywords = keywords[1];
+    d.lunchClubKeywords = keywords[2];
 
     // then
     expect(
@@ -124,8 +123,8 @@ describe("ClubMember", () => {
       a.hasAppliedForLunch = true;
       b.hasAppliedForLunch = true;
 
-      a.lunchClubKeywords = "마케팅/브랜딩";
-      b.lunchClubKeywords = "마케팅/브랜딩, 창업/비즈니스";
+      a.lunchClubKeywords = keywords[0];
+      b.lunchClubKeywords = [keywords[0], keywords[1]].join(", ");
 
       expect(a.canMatchForLunchWith(b)).toBe(true);
     });
@@ -143,7 +142,7 @@ describe("ClubMember", () => {
       expect(a.canMatchForLunchWith(b)).toBe(false);
     });
 
-    test("서로가 그룹에 있다.", () => {
+    test("서로가 같은 그룹에 있다.", () => {
       // given
       const a = generateMockClubMemberBy("lunch-dinner");
       const b = generateMockClubMemberBy("lunch-dinner");
@@ -195,8 +194,8 @@ describe("ClubMember", () => {
       a.hasAppliedForLunch = true;
       b.hasAppliedForLunch = true;
 
-      a.lunchClubKeywords = "마케팅/브랜딩";
-      b.lunchClubKeywords = "창업/비즈니스";
+      a.lunchClubKeywords = keywords[0];
+      b.lunchClubKeywords = keywords[2];
 
       // then
       expect(a.canMatchForLunchWith(b)).toBe(false);
