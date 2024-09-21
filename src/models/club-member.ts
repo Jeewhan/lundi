@@ -60,14 +60,19 @@ export default class ClubMember {
     return keywords.filter((keyword) => otherKeywords.includes(keyword)).length;
   }
 
-  public canMatchForLunchWith(member: ClubMember): boolean {
-    return (
-      this.isEligibleForLunch() &&
-      member.isEligibleForLunch() &&
-      !this.isPersonInGroup(member.name) &&
-      !this.isPersonExcluded(member.name) &&
-      !member.isPersonExcluded(this.name) &&
-      this.hasMatchingLunchClubKeywords(member.lunchClubKeywords) > 0
-    );
+  public scoreLunchMatch(member: ClubMember) {
+    if (!this.isEligibleForLunch()) {
+      return 0;
+    }
+
+    if (this.isPersonInGroup(member.name)) {
+      return 0;
+    }
+
+    if (this.isPersonExcluded(member.name)) {
+      return 0;
+    }
+
+    return this.hasMatchingLunchClubKeywords(member.lunchClubKeywords);
   }
 }

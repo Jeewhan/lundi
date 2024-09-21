@@ -130,7 +130,7 @@ describe("ClubMember", () => {
       a.lunchClubKeywords = keywords[0];
       b.lunchClubKeywords = [keywords[0], keywords[1]].join(", ");
 
-      expect(a.canMatchForLunchWith(b)).toBe(true);
+      expect(a.scoreLunchMatch(b)).toBeGreaterThanOrEqual(1);
     });
 
     test("다른 한 명은 dinner만 신청했다.", () => {
@@ -143,7 +143,7 @@ describe("ClubMember", () => {
       b.hasAppliedForLunch = false;
 
       // then
-      expect(a.canMatchForLunchWith(b)).toBe(false);
+      expect(a.scoreLunchMatch(b)).toBe(0);
     });
 
     test("서로가 같은 그룹에 있다.", () => {
@@ -155,7 +155,7 @@ describe("ClubMember", () => {
       a.groupMembers = a.groupMembers.split(", ").concat(b.name).join(", ");
 
       // then
-      expect(a.canMatchForLunchWith(b)).toBe(false);
+      expect(a.scoreLunchMatch(b)).toBe(0);
     });
 
     test("서로가 서로를 제외한다.", () => {
@@ -170,7 +170,7 @@ describe("ClubMember", () => {
         .join(", ");
 
       // then
-      expect(a.canMatchForLunchWith(b)).toBe(false);
+      expect(a.scoreLunchMatch(b)).toBe(0);
     });
 
     test("한 명만 다른 한 명을 제외한다.", () => {
@@ -186,7 +186,7 @@ describe("ClubMember", () => {
         .join(", ");
 
       // then
-      expect(a.canMatchForLunchWith(b)).toBe(false);
+      expect(a.scoreLunchMatch(b)).toBe(0);
     });
 
     test("서로의 관심사가 다르다.", () => {
@@ -202,7 +202,7 @@ describe("ClubMember", () => {
       b.lunchClubKeywords = keywords[2];
 
       // then
-      expect(a.canMatchForLunchWith(b)).toBe(false);
+      expect(a.scoreLunchMatch(b)).toBe(0);
     });
   });
 });
