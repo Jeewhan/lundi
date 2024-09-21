@@ -1,13 +1,14 @@
 import { describe, test, expect, expectTypeOf } from "vitest";
 import { Faker, ko } from "@faker-js/faker";
 
-import ClubMember, {
+import ClubMember from "./club-member";
+import {
   clubTypes,
   dinnerPreferredDateTimes,
   groups,
   keywords,
   regions,
-} from "./club-member";
+} from "../constants";
 
 const faker = new Faker({
   locale: [ko],
