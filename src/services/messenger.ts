@@ -3,6 +3,22 @@ import { App, Block } from "@slack/bolt";
 class Slack {
   constructor(private readonly slack: App) {}
 
+  public createBlocks(text: string, actionOptions: Block[]): Block[] {
+    return [
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text,
+        },
+      } as Block,
+      {
+        type: "divider",
+      },
+      ...actionOptions,
+    ];
+  }
+
   async post(channel: string, text: string, blocks?: Block[]) {
     await this.slack.client.chat.postMessage({
       channel,

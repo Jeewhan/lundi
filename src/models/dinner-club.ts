@@ -1,5 +1,4 @@
 import { GATHER_DINNER_CLUB } from "../constants";
-import { createBlocks } from "../utils/slack";
 import Slack from "../services/messenger";
 
 class DinnerClub {
@@ -9,7 +8,7 @@ class DinnerClub {
     await this.slack.post(
       process.env.SLACK_DINNER_CHANNEL as string,
       "디너클럽🍜 참가신청을 받습니다!",
-      createBlocks(gatherText, gatherActionOptions)
+      this.slack.createBlocks(gatherText, gatherActionOptions)
     );
   }
 }
