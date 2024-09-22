@@ -1,14 +1,14 @@
 import { describe, test, expect, expectTypeOf } from "vitest";
 
 import ClubMember from "./club-member";
-import { clubTypes, dinnerPreferredDateTimes, keywords } from "../constants";
+import { CLUB_TYPES, dinnerPreferredDateTimes, keywords } from "../constants";
 import { faker, generateMockClubMemberBy } from "../utils/mock";
 
 describe("ClubMember", () => {
   test("constructor", () => {
     // given
     const member = generateMockClubMemberBy(
-      faker.helpers.arrayElement(clubTypes)
+      faker.helpers.enumValue(CLUB_TYPES)
     );
 
     // then
@@ -17,8 +17,8 @@ describe("ClubMember", () => {
 
   test("get dinnerPreferredDateTimeList", () => {
     // given
-    const a = generateMockClubMemberBy("lunch-dinner");
-    const b = generateMockClubMemberBy("lunch-dinner");
+    const a = generateMockClubMemberBy(CLUB_TYPES["lunch-dinner"]);
+    const b = generateMockClubMemberBy(CLUB_TYPES["lunch-dinner"]);
 
     // when
     a.dinnerPreferredDateTime = dinnerPreferredDateTimes.join(", ");
@@ -31,9 +31,11 @@ describe("ClubMember", () => {
 
   test("isEligibleForLunch", () => {
     // given
-    const lunchMember = generateMockClubMemberBy("lunch");
-    const dinnerMember = generateMockClubMemberBy("dinner");
-    const lunchDinnerMember = generateMockClubMemberBy("lunch-dinner");
+    const lunchMember = generateMockClubMemberBy(CLUB_TYPES.lunch);
+    const dinnerMember = generateMockClubMemberBy(CLUB_TYPES.dinner);
+    const lunchDinnerMember = generateMockClubMemberBy(
+      CLUB_TYPES["lunch-dinner"]
+    );
 
     // when
     lunchMember.hasAppliedForLunch = true;
@@ -51,9 +53,11 @@ describe("ClubMember", () => {
 
   test("isEligibleForDinner", () => {
     // given
-    const lunchMember = generateMockClubMemberBy("lunch");
-    const dinnerMember = generateMockClubMemberBy("dinner");
-    const lunchDinnerMember = generateMockClubMemberBy("lunch-dinner");
+    const lunchMember = generateMockClubMemberBy(CLUB_TYPES.lunch);
+    const dinnerMember = generateMockClubMemberBy(CLUB_TYPES.dinner);
+    const lunchDinnerMember = generateMockClubMemberBy(
+      CLUB_TYPES["lunch-dinner"]
+    );
 
     // then
     expect(lunchMember.isEligibleForDinner()).toBe(false);
@@ -63,9 +67,9 @@ describe("ClubMember", () => {
 
   test("isPersonInGroup", () => {
     // given
-    const a = generateMockClubMemberBy("lunch-dinner");
-    const b = generateMockClubMemberBy("lunch-dinner");
-    const c = generateMockClubMemberBy("lunch-dinner");
+    const a = generateMockClubMemberBy(CLUB_TYPES["lunch-dinner"]);
+    const b = generateMockClubMemberBy(CLUB_TYPES["lunch-dinner"]);
+    const c = generateMockClubMemberBy(CLUB_TYPES["lunch-dinner"]);
 
     // when
     a.groupMembers = a.groupMembers.split(", ").concat(b.name).join(", ");
@@ -77,9 +81,9 @@ describe("ClubMember", () => {
 
   test("isPersonExcluded", () => {
     // given
-    const a = generateMockClubMemberBy("lunch-dinner");
-    const b = generateMockClubMemberBy("lunch-dinner");
-    const c = generateMockClubMemberBy("lunch-dinner");
+    const a = generateMockClubMemberBy(CLUB_TYPES["lunch-dinner"]);
+    const b = generateMockClubMemberBy(CLUB_TYPES["lunch-dinner"]);
+    const c = generateMockClubMemberBy(CLUB_TYPES["lunch-dinner"]);
 
     // when
     a.excludedMembers = a.excludedMembers.split(", ").concat(b.name).join(", ");
@@ -91,10 +95,10 @@ describe("ClubMember", () => {
 
   test("hasMatchingLunchClubKeywords", () => {
     // given
-    const a = generateMockClubMemberBy("lunch-dinner");
-    const b = generateMockClubMemberBy("lunch-dinner");
-    const c = generateMockClubMemberBy("lunch-dinner");
-    const d = generateMockClubMemberBy("lunch-dinner");
+    const a = generateMockClubMemberBy(CLUB_TYPES["lunch-dinner"]);
+    const b = generateMockClubMemberBy(CLUB_TYPES["lunch-dinner"]);
+    const c = generateMockClubMemberBy(CLUB_TYPES["lunch-dinner"]);
+    const d = generateMockClubMemberBy(CLUB_TYPES["lunch-dinner"]);
 
     // when
     a.lunchClubKeywords = keywords[0];
@@ -116,8 +120,8 @@ describe("ClubMember", () => {
   describe("canMatchForLunchWith", () => {
     test("매칭 성공", () => {
       // given
-      const a = generateMockClubMemberBy("lunch-dinner");
-      const b = generateMockClubMemberBy("lunch-dinner");
+      const a = generateMockClubMemberBy(CLUB_TYPES["lunch-dinner"]);
+      const b = generateMockClubMemberBy(CLUB_TYPES["lunch-dinner"]);
 
       // when
       a.hasAppliedForLunch = true;
@@ -131,8 +135,8 @@ describe("ClubMember", () => {
 
     test("다른 한 명은 dinner만 신청했다.", () => {
       // given
-      const a = generateMockClubMemberBy("lunch-dinner");
-      const b = generateMockClubMemberBy("dinner");
+      const a = generateMockClubMemberBy(CLUB_TYPES["lunch-dinner"]);
+      const b = generateMockClubMemberBy(CLUB_TYPES.dinner);
 
       // when
       a.hasAppliedForLunch = true;
@@ -144,8 +148,8 @@ describe("ClubMember", () => {
 
     test("서로가 같은 그룹에 있다.", () => {
       // given
-      const a = generateMockClubMemberBy("lunch-dinner");
-      const b = generateMockClubMemberBy("lunch-dinner");
+      const a = generateMockClubMemberBy(CLUB_TYPES["lunch-dinner"]);
+      const b = generateMockClubMemberBy(CLUB_TYPES["lunch-dinner"]);
 
       // when
       a.groupMembers = a.groupMembers.split(", ").concat(b.name).join(", ");
@@ -156,8 +160,8 @@ describe("ClubMember", () => {
 
     test("서로가 서로를 제외한다.", () => {
       // given
-      const a = generateMockClubMemberBy("lunch-dinner");
-      const b = generateMockClubMemberBy("lunch-dinner");
+      const a = generateMockClubMemberBy(CLUB_TYPES["lunch-dinner"]);
+      const b = generateMockClubMemberBy(CLUB_TYPES["lunch-dinner"]);
 
       // when
       a.excludedMembers = a.excludedMembers
@@ -171,9 +175,9 @@ describe("ClubMember", () => {
 
     test("한 명만 다른 한 명을 제외한다.", () => {
       // given
-      const a = generateMockClubMemberBy("lunch-dinner");
-      const b = generateMockClubMemberBy("lunch-dinner");
-      const c = generateMockClubMemberBy("lunch-dinner");
+      const a = generateMockClubMemberBy(CLUB_TYPES["lunch-dinner"]);
+      const b = generateMockClubMemberBy(CLUB_TYPES["lunch-dinner"]);
+      const c = generateMockClubMemberBy(CLUB_TYPES["lunch-dinner"]);
 
       // when
       a.excludedMembers = a.excludedMembers
@@ -187,8 +191,8 @@ describe("ClubMember", () => {
 
     test("서로의 관심사가 다르다.", () => {
       // given
-      const a = generateMockClubMemberBy("lunch-dinner");
-      const b = generateMockClubMemberBy("lunch-dinner");
+      const a = generateMockClubMemberBy(CLUB_TYPES["lunch-dinner"]);
+      const b = generateMockClubMemberBy(CLUB_TYPES["lunch-dinner"]);
 
       // when
       a.hasAppliedForLunch = true;

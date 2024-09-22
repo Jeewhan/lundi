@@ -1,6 +1,7 @@
 import { Faker, ko } from "@faker-js/faker";
 import {
-  clubTypes,
+  CLUB_TYPES,
+  ClubType,
   dinnerPreferredDateTimes,
   groups,
   keywords,
@@ -12,9 +13,7 @@ export const faker = new Faker({
   locale: [ko],
 });
 
-export const generateMockClubMemberBy = (
-  clubType: (typeof clubTypes)[number]
-): ClubMember => {
+export const generateMockClubMemberBy = (clubType: ClubType): ClubMember => {
   return new ClubMember(
     faker.person.fullName(),
     `U${faker.string.alphanumeric({ length: 10, casing: "upper" })}`,
@@ -61,10 +60,8 @@ const generateExcludedMembers = (): string => {
   ).join(", ");
 };
 
-const generateLunchClubKeywords = (
-  clubType: (typeof clubTypes)[number]
-): string => {
-  if (clubType === "dinner") {
+const generateLunchClubKeywords = (clubType: ClubType): string => {
+  if (clubType === CLUB_TYPES.dinner) {
     return "";
   }
 
@@ -76,10 +73,8 @@ const generateLunchClubKeywords = (
   return selectedKeywords.join(", ");
 };
 
-const generateDinnerClubLocations = (
-  clubType: (typeof clubTypes)[number]
-): string => {
-  if (clubType === "lunch") {
+const generateDinnerClubLocations = (clubType: ClubType): string => {
+  if (clubType === CLUB_TYPES.lunch) {
     return "";
   }
 
@@ -91,20 +86,16 @@ const generateDinnerClubLocations = (
     .join(", ");
 };
 
-const generateHasAppliedForLunch = (
-  clubType: (typeof clubTypes)[number]
-): boolean => {
-  if (clubType === "dinner") {
+const generateHasAppliedForLunch = (clubType: ClubType): boolean => {
+  if (clubType === CLUB_TYPES.dinner) {
     return false;
   }
 
   return faker.number.int({ min: 0, max: 100 }) > 30;
 };
 
-const generateDinnerPreferredDateTime = (
-  clubType: (typeof clubTypes)[number]
-): string => {
-  if (clubType === "lunch") {
+const generateDinnerPreferredDateTime = (clubType: ClubType): string => {
+  if (clubType === CLUB_TYPES.lunch) {
     return "";
   }
 

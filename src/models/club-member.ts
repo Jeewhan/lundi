@@ -1,4 +1,4 @@
-import { clubTypes, groups } from "../constants";
+import { CLUB_TYPES, ClubType, groups } from "../constants";
 
 export default class ClubMember {
   constructor(
@@ -7,7 +7,7 @@ export default class ClubMember {
     public group: (typeof groups)[number],
     public phone: string,
     public introduce: string,
-    public clubType: (typeof clubTypes)[number],
+    public clubType: ClubType,
     public groupMembers: string,
     public excludedMembers: string,
     public lunchClubKeywords: string,
@@ -25,7 +25,7 @@ export default class ClubMember {
   }
 
   public isEligibleForLunch(): boolean {
-    if (this.clubType === "dinner") {
+    if (this.clubType === CLUB_TYPES.dinner) {
       return false;
     }
 
@@ -37,7 +37,10 @@ export default class ClubMember {
   }
 
   public isEligibleForDinner(): boolean {
-    return this.clubType === "dinner" || this.clubType === "lunch-dinner";
+    return (
+      this.clubType === CLUB_TYPES.dinner ||
+      this.clubType === CLUB_TYPES["lunch-dinner"]
+    );
   }
 
   public isPersonInGroup(name: ClubMember["name"]): boolean {

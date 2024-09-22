@@ -1,7 +1,12 @@
 export const GATHER_LUNCH_CLUB = "gather-lunch-club";
 export const GATHER_DINNER_CLUB = "gather-dinner-club";
 
-export const clubTypes = ["lunch", "dinner", "lunch-dinner"] as const;
+export const CLUB_TYPES = {
+  lunch: "lunch",
+  dinner: "dinner",
+  "lunch-dinner": "lunch-dinner",
+} as const;
+export type ClubType = (typeof CLUB_TYPES)[keyof typeof CLUB_TYPES];
 
 export const regions = [
   "강남/서초",
