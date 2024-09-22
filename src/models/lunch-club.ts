@@ -13,8 +13,13 @@ class LunchClub {
     );
   }
 
-  public match(left: ClubMember, right: ClubMember) {
-    return left.scoreLunchMatch(right) > 0 && right.scoreLunchMatch(left) > 0;
+  public score(left: ClubMember, right: ClubMember) {
+    const leftScore = left.scoreLunchMatch(right);
+    const rightScore = right.scoreLunchMatch(left);
+
+    return leftScore === 0 || rightScore === 0
+      ? 0
+      : (leftScore + rightScore) / 2;
   }
 }
 

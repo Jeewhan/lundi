@@ -18,7 +18,7 @@ describe("LunchClub", () => {
     lunchClub = new LunchClub(messenger);
   });
 
-  describe("match", () => {
+  describe("score", () => {
     test("1 on 1 매칭 성공: 키워드 일치", () => {
       // given
       const a = generateMockClubMemberBy("lunch");
@@ -31,7 +31,7 @@ describe("LunchClub", () => {
       b.lunchClubKeywords = [keywords[0], keywords[1]].join(", ");
 
       // then
-      expect(lunchClub.match(a, b)).toBe(true);
+      expect(lunchClub.score(a, b)).toBeGreaterThanOrEqual(1);
     });
 
     test("1 on 1 매칭 실패: 키워드 불일치", () => {
@@ -46,7 +46,7 @@ describe("LunchClub", () => {
       b.lunchClubKeywords = keywords[1];
 
       // then
-      expect(lunchClub.match(a, b)).toBe(false);
+      expect(lunchClub.score(a, b)).toEqual(0);
     });
 
     test("1 on 1 매칭 실패: 같은 그룹", () => {
@@ -63,7 +63,7 @@ describe("LunchClub", () => {
       b.groupMembers = a.name;
 
       // then
-      expect(lunchClub.match(a, b)).toBe(false);
+      expect(lunchClub.score(a, b)).toEqual(0);
     });
 
     test("1 on 1 매칭 실패: 한 명이 다른 한 명을 제외", () => {
@@ -79,7 +79,7 @@ describe("LunchClub", () => {
       a.excludedMembers = b.name;
 
       // then
-      expect(lunchClub.match(a, b)).toBe(false);
+      expect(lunchClub.score(a, b)).toEqual(0);
     });
 
     test("1 on 1 매칭 실패: 한 명이 신청하지 않은 경우", () => {
@@ -92,7 +92,7 @@ describe("LunchClub", () => {
       b.hasAppliedForLunch = false;
 
       // then
-      expect(lunchClub.match(a, b)).toBe(false);
+      expect(lunchClub.score(a, b)).toEqual(0);
     });
   });
 });
