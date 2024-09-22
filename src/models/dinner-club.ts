@@ -1,14 +1,14 @@
 import { GATHER_DINNER_CLUB } from "../constants";
-import Slack from "../services/messenger";
+import { Messenger } from "../services/messenger";
 
 class DinnerClub {
-  constructor(private readonly slack: Slack) {}
+  constructor(private readonly messenger: Messenger) {}
 
   public async sendGatherMessage() {
-    await this.slack.post(
+    await this.messenger.post(
       process.env.SLACK_DINNER_CHANNEL as string,
       "디너클럽🍜 참가신청을 받습니다!",
-      this.slack.createBlocks(gatherText, gatherActionOptions)
+      this.messenger.createBlocks(gatherText, gatherActionOptions)
     );
   }
 }
