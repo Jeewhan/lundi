@@ -1,3 +1,4 @@
+import { vi } from "vitest";
 import { Faker, ko } from "@faker-js/faker";
 import {
   CLUB_TYPES,
@@ -8,6 +9,7 @@ import {
   regions,
 } from "../constants";
 import ClubMember from "../models/club-member";
+import Slack, { Messenger } from "../services/messenger";
 
 export const faker = new Faker({
   locale: [ko],

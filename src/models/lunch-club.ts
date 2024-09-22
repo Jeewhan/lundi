@@ -12,6 +12,10 @@ class LunchClub {
       this.messenger.createBlocks(gatherText, gatherActionOptions)
     );
   }
+
+  public match(left: ClubMember, right: ClubMember) {
+    return left.scoreLunchMatch(right) > 0 && right.scoreLunchMatch(left) > 0;
+  }
 }
 
 export default LunchClub;
