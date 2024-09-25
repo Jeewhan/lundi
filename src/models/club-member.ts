@@ -1,5 +1,9 @@
 import { CLUB_TYPES, ClubType, groups } from "../constants";
 
+// TODO: scoring 을 할 때에만 따라다니는 애들 vs 그렇지 않은 애들.
+// TODO: 같이 다니는 친구들과 그렇지 않은 친구들의 분리.
+// TODO: score는 계산 가능한 것이어서, 정말로 명확하게 계산에 필요한 친구들로 따라다녀야 한다.
+
 export default class ClubMember {
   constructor(
     public name: string,
