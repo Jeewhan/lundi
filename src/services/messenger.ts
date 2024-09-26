@@ -2,7 +2,7 @@ import { App, Block } from "@slack/bolt";
 
 export interface Messenger {
   post(channel: string, text: string, blocks?: Block[]): Promise<void>;
-  direct(users: string[], text: string): Promise<void>;
+  direct(users: string[], text: string): Promise<string>;
   createBlocks(text: string, actionOptions: Block[]): Block[];
 }
 
@@ -38,12 +38,16 @@ class Slack implements Messenger {
       users: users.join(","),
     });
 
-    if (channel?.id) {
-      await this.slack.client.chat.postMessage({
-        channel: channel.id,
-        text,
-      });
+    if (!channel?.id) {
+      throw new Error("Failed to open direct message channel");
     }
+
+    await this.slack.client.chat.postMessage({
+      channel: channel.id,
+      text,
+    });
+
+    return channel.id;
   }
 }
 

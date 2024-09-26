@@ -4,6 +4,7 @@ import { keywords } from "../constants";
 import { generateMockClubMemberBy } from "../utils/mock";
 import LunchClub from "./lunch-club";
 import { Messenger } from "../services/messenger";
+import { Sheets } from "../services/sheets";
 
 // TODO: mock -> fixture
 // TODO: fixture는 랜덤성이 없어야 한다. 상대적으로 비교해선 안 된다. 그러면 동어반복이 되어버린다.
@@ -11,16 +12,19 @@ import { Messenger } from "../services/messenger";
 // TODO: fixture를 어떻게 구성하느냐가 중요하다. edge case에 대한 설계도 내포되는 것.
 
 describe("LunchClub", () => {
-  let messenger: Messenger;
   let lunchClub: LunchClub;
 
   beforeEach(() => {
-    messenger = {
+    const messenger = {
       post: vi.fn(),
       direct: vi.fn(),
       createBlocks: vi.fn(),
     };
-    lunchClub = new LunchClub(messenger);
+    const sheets = {
+      read: vi.fn(),
+      write: vi.fn(),
+    };
+    lunchClub = new LunchClub(messenger, sheets);
   });
 
   describe("score", () => {

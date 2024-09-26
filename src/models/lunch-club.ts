@@ -1,9 +1,13 @@
 import { GATHER_LUNCH_CLUB } from "../constants";
 import { Messenger } from "../services/messenger";
+import { Sheets } from "../services/sheets";
 import ClubMember from "./club-member";
 
 class LunchClub {
-  constructor(private readonly messenger: Messenger) {}
+  constructor(
+    private readonly messenger: Messenger,
+    private readonly sheets: Sheets
+  ) {}
 
   public async sendGatherMessage() {
     await this.messenger.post(
@@ -65,6 +69,58 @@ class LunchClub {
 
     return result;
   }
+
+  public async notice(pairs: [ClubMember, ClubMember][]) {
+    for (const [left, right] of pairs) {
+      const channel = await this.messenger.direct(
+        [left.id, right.id, process.env.LUNDI_MANAGER_SLACK_ID as string],
+        getNoticeText(left, right)
+      );
+
+      await this.log([left, right], channel);
+    }
+  }
+
+  public async log(pair: [ClubMember, ClubMember], channel?: string) {
+    const [left, right] = pair;
+
+    await this.sheets.write("logs", [
+      left.id,
+      right.id,
+      ...(channel ? [channel] : []),
+    ]);
+  }
+
+  public async fetch() {
+    const members = await this.sheets.read("members");
+
+    return members.map(
+      (member: any) =>
+        new ClubMember(
+          member.name,
+          member.id,
+          member.group,
+          member.phone,
+          member.introduce,
+          member.clubType,
+          member.groupMembers,
+          member.excludedMembers,
+          member.logs,
+          member.lunchClubKeywords,
+          member.dinnerClubLocations,
+          member.hasAppliedForLunch,
+          member.dinnerPreferredDateTime
+        )
+    );
+  }
+
+  public async run() {
+    const members = await this.fetch();
+
+    const pairs = this.pair(members);
+
+    await this.notice(pairs);
+  }
 }
 
 export default LunchClub;
@@ -106,3 +162,34 @@ const gatherActionOptions = [
     ],
   },
 ];
+
+const getNoticeText = (
+  left: ClubMember,
+  right: ClubMember
+) => `안녕하세요, 런치클럽 매칭이 완료되었습니다!
+<@${left.id}>님께서 모임을 이끌어주세요 :)
+이틀 내에 답이 없다면 다른분이 먼저 이야기를 꺼내주세요.
+상대방과 일정&장소를 조율하고, 맛있는 식사와 함께 즐거운 시간 보내세요.
+
+서로의 공통 관심사는 ${left
+  .getMatchingLunchClubKeywords(right.lunchClubKeywords)
+  .join(", ")} 이에요. 만났을 때 공통 관심사를 기반으로 이야기 나눠봐요!
+
+* 지역과 음식점을 고르기 고민이라면, 아래 모임 추천 장소 DB를 참고해서 정해보세요 :)
+
+https://naver.me/G9rpvEew
+
+<@${left.id}>님
+• 연락처: ${left.phone}
+• 관심사: ${left.lunchClubKeywords}
+• <${left.introduce}|자기소개 링크>
+
+<@${right.id}>님
+• 연락처: ${right.phone}
+• 관심사: ${right.lunchClubKeywords}
+• <${right.introduce}|자기소개 링크>
+
+일정 조율 후 불참 시 메모어 보증금 1만원이 차감됩니다.
+상대방이 일정 조율 후 일방적으로 약속을 취소하거나 노쇼 시, 불참 멤버 리포트를 부탁드립니다🙏
+
+약속한 일정이 어려워진 경우, 상대방에게 양해를 구하고 다른 일정을 조율해 보아요😉`;
