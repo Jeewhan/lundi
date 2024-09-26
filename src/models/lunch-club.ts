@@ -1,6 +1,7 @@
 import { GATHER_LUNCH_CLUB } from "../constants";
 import { Messenger } from "../services/messenger";
 import { Sheets } from "../services/sheets";
+import { shuffle } from "../utils/shuffle";
 import ClubMember from "./club-member";
 
 class LunchClub {
@@ -27,8 +28,8 @@ class LunchClub {
   }
 
   public pair(members: ClubMember[]) {
-    const lunchMembers = members.filter((member) =>
-      member.isEligibleForLunch()
+    const lunchMembers = shuffle(
+      members.filter((member) => member.isEligibleForLunch())
     );
     const scores = new Map<number, [ClubMember, ClubMember][]>();
     const matched = new Set<string>();
