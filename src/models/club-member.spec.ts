@@ -107,7 +107,7 @@ describe("ClubMember", () => {
     expect(a.isPersonInLogs(c.id)).toBe(false);
   });
 
-  test("hasMatchingLunchClubKeywords", () => {
+  test("getMatchingLunchClubKeywords", () => {
     // given
     const a = generateMockClubMemberBy(CLUB_TYPES["lunch-dinner"]);
     const b = generateMockClubMemberBy(CLUB_TYPES["lunch-dinner"]);
@@ -122,13 +122,13 @@ describe("ClubMember", () => {
     d.lunchClubKeywords = keywords[2];
 
     // then
-    expect(
-      a.hasMatchingLunchClubKeywords(b.lunchClubKeywords)
-    ).toBeGreaterThanOrEqual(1);
-    expect(
-      b.hasMatchingLunchClubKeywords(c.lunchClubKeywords)
-    ).toBeGreaterThanOrEqual(1);
-    expect(c.hasMatchingLunchClubKeywords(d.lunchClubKeywords)).toBeLessThan(1);
+    expect(a.getMatchingLunchClubKeywords(b.lunchClubKeywords)).toEqual([
+      keywords[0],
+    ]);
+    expect(b.getMatchingLunchClubKeywords(c.lunchClubKeywords)).toEqual([
+      keywords[1],
+    ]);
+    expect(c.getMatchingLunchClubKeywords(d.lunchClubKeywords)).toEqual([]);
   });
 
   describe("canMatchForLunchWith", () => {

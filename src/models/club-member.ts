@@ -60,16 +60,16 @@ export default class ClubMember {
     return this.logs.includes(id);
   }
 
-  public hasMatchingLunchClubKeywords(
+  public getMatchingLunchClubKeywords(
     lunchClubKeywords: ClubMember["lunchClubKeywords"]
   ) {
     const keywords = this.lunchClubKeywords.split(", ");
     const otherKeywords = lunchClubKeywords.split(", ");
 
-    return keywords.filter((keyword) => otherKeywords.includes(keyword)).length;
+    return keywords.filter((keyword) => otherKeywords.includes(keyword));
   }
 
-  public scoreLunchMatch(member: ClubMember) {
+  public scoreLunchMatch(member: ClubMember): number {
     if (!this.isEligibleForLunch()) {
       return 0;
     }
@@ -86,6 +86,6 @@ export default class ClubMember {
       return 0;
     }
 
-    return this.hasMatchingLunchClubKeywords(member.lunchClubKeywords);
+    return this.getMatchingLunchClubKeywords(member.lunchClubKeywords).length;
   }
 }
