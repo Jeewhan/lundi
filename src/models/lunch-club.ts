@@ -116,7 +116,7 @@ class LunchClub {
     return shuffle<LunchClubMember>(lunchClubMembers);
   }
 
-  public async run() {
+  public async match() {
     const lunchClubMembers = await this.fetch();
 
     const pairs = this.pair(lunchClubMembers);
