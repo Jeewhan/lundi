@@ -2,7 +2,7 @@ import { GATHER_LUNCH_CLUB } from "../constants";
 import { Messenger } from "../services/messenger";
 import { Sheets } from "../services/sheets";
 import { shuffle } from "../utils/shuffle";
-import ClubMember from "./club-member";
+import { LunchClubMember } from "./club-member";
 
 class LunchClub {
   constructor(
@@ -18,7 +18,7 @@ class LunchClub {
     );
   }
 
-  public score(left: ClubMember, right: ClubMember) {
+  public score(left: LunchClubMember, right: LunchClubMember) {
     const leftScore = left.scoreLunchMatch(right);
     const rightScore = right.scoreLunchMatch(left);
 
@@ -27,22 +27,23 @@ class LunchClub {
       : (leftScore + rightScore) / 2;
   }
 
-  public pair(members: ClubMember[]) {
-    const lunchMembers = shuffle(
+  public pair(members: LunchClubMember[]) {
+    // TODO: 이것을 pair가 아닌 fetch 시점에 처리해줄 것.
+    const lunchClubMembers = shuffle(
       members.filter((member) => member.isEligibleForLunch())
     );
-    const scores = new Map<number, [ClubMember, ClubMember][]>();
+    const scores = new Map<number, [LunchClubMember, LunchClubMember][]>();
     const matched = new Set<string>();
-    const result = [];
+    const result = [] as [LunchClubMember, LunchClubMember][];
 
-    if (lunchMembers.length < 2) {
+    if (lunchClubMembers.length < 2) {
       return [];
     }
 
-    for (let i = 0; i < lunchMembers.length; i += 1) {
-      for (let j = i + 1; j < lunchMembers.length; j += 1) {
-        const left = lunchMembers[i];
-        const right = lunchMembers[j];
+    for (let i = 0; i < lunchClubMembers.length; i += 1) {
+      for (let j = i + 1; j < lunchClubMembers.length; j += 1) {
+        const left = lunchClubMembers[i];
+        const right = lunchClubMembers[j];
 
         const score = this.score(left, right);
 
@@ -71,7 +72,7 @@ class LunchClub {
     return result;
   }
 
-  public async notice(pairs: [ClubMember, ClubMember][]) {
+  public async notice(pairs: [LunchClubMember, LunchClubMember][]) {
     for (const [left, right] of pairs) {
       const channel = await this.messenger.direct(
         [left.id, right.id, process.env.LUNDI_MANAGER_SLACK_ID as string],
@@ -82,7 +83,7 @@ class LunchClub {
     }
   }
 
-  public async log(pair: [ClubMember, ClubMember], channel?: string) {
+  public async log(pair: [LunchClubMember, LunchClubMember], channel?: string) {
     const [left, right] = pair;
 
     await this.sheets.write("logs", [
@@ -97,7 +98,7 @@ class LunchClub {
 
     return members.map(
       (member: any) =>
-        new ClubMember(
+        new LunchClubMember(
           member.name,
           member.id,
           member.group,
@@ -165,8 +166,8 @@ const gatherActionOptions = [
 ];
 
 const getNoticeText = (
-  left: ClubMember,
-  right: ClubMember
+  left: LunchClubMember,
+  right: LunchClubMember
 ) => `안녕하세요, 런치클럽 매칭이 완료되었습니다!
 <@${left.id}>님께서 모임을 이끌어주세요 :)
 이틀 내에 답이 없다면 다른분이 먼저 이야기를 꺼내주세요.

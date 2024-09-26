@@ -7,11 +7,29 @@ import {
   keywords,
   regions,
 } from "../constants";
-import ClubMember from "../models/club-member";
+import ClubMember, { LunchClubMember } from "../models/club-member";
 
 export const faker = new Faker({
   locale: [ko],
 });
+
+export const generateMockLunchClubMember = () => {
+  return new LunchClubMember(
+    faker.person.fullName(),
+    `U${faker.string.alphanumeric({ length: 10, casing: "upper" })}`,
+    faker.helpers.arrayElement(groups),
+    generatePhoneNumber(),
+    generateIntroduce(),
+    CLUB_TYPES.lunch,
+    generateGroupMembers(),
+    generateExcludedMembers(),
+    generateLogs(),
+    generateLunchClubKeywords(CLUB_TYPES.lunch),
+    generateDinnerClubLocations(CLUB_TYPES.lunch),
+    generateHasAppliedForLunch(CLUB_TYPES.lunch),
+    generateDinnerPreferredDateTime(CLUB_TYPES.lunch)
+  );
+};
 
 export const generateMockClubMemberBy = (clubType: ClubType): ClubMember => {
   return new ClubMember(

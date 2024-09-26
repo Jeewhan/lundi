@@ -59,7 +59,9 @@ export default class ClubMember {
   public isPersonInLogs(id: ClubMember["id"]): boolean {
     return this.logs.includes(id);
   }
+}
 
+export class LunchClubMember extends ClubMember {
   public getMatchingLunchClubKeywords(
     lunchClubKeywords: ClubMember["lunchClubKeywords"]
   ) {
@@ -69,7 +71,13 @@ export default class ClubMember {
     return keywords.filter((keyword) => otherKeywords.includes(keyword));
   }
 
-  public scoreLunchMatch(member: ClubMember): number {
+  public scoreLunchMatch(member: LunchClubMember): number {
+    if (!(member instanceof LunchClubMember)) {
+      throw new Error(
+        `${(member as ClubMember).name}은 LunchClubMember가 아닙니다.`
+      );
+    }
+
     if (!this.isEligibleForLunch()) {
       return 0;
     }

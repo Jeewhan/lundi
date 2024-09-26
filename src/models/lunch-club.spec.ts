@@ -1,7 +1,10 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 import { keywords } from "../constants";
-import { generateMockClubMemberBy } from "../utils/mock";
+import {
+  generateMockClubMemberBy,
+  generateMockLunchClubMember,
+} from "../utils/mock";
 import LunchClub from "./lunch-club";
 import { Messenger } from "../services/messenger";
 import { Sheets } from "../services/sheets";
@@ -30,8 +33,8 @@ describe("LunchClub", () => {
   describe("score", () => {
     test("1 on 1 매칭 성공: 키워드 일치", () => {
       // given
-      const a = generateMockClubMemberBy("lunch");
-      const b = generateMockClubMemberBy("lunch");
+      const a = generateMockLunchClubMember();
+      const b = generateMockLunchClubMember();
 
       // when
       a.hasAppliedForLunch = true; // TODO: 이렇게 해줄 것이라면 random generate를 하는 것의 가치가 없다.
@@ -45,8 +48,8 @@ describe("LunchClub", () => {
 
     test("1 on 1 매칭 실패: 키워드 불일치", () => {
       // given
-      const a = generateMockClubMemberBy("lunch");
-      const b = generateMockClubMemberBy("lunch");
+      const a = generateMockLunchClubMember();
+      const b = generateMockLunchClubMember();
 
       // when
       a.hasAppliedForLunch = true;
@@ -60,8 +63,8 @@ describe("LunchClub", () => {
 
     test("1 on 1 매칭 실패: 같은 그룹", () => {
       // given
-      const a = generateMockClubMemberBy("lunch");
-      const b = generateMockClubMemberBy("lunch");
+      const a = generateMockLunchClubMember();
+      const b = generateMockLunchClubMember();
 
       // when
       a.hasAppliedForLunch = true;
@@ -77,8 +80,8 @@ describe("LunchClub", () => {
 
     test("1 on 1 매칭 실패: 한 명이 다른 한 명을 제외", () => {
       // given
-      const a = generateMockClubMemberBy("lunch");
-      const b = generateMockClubMemberBy("lunch");
+      const a = generateMockLunchClubMember();
+      const b = generateMockLunchClubMember();
 
       // when
       a.hasAppliedForLunch = true;
@@ -93,8 +96,8 @@ describe("LunchClub", () => {
 
     test("1 on 1 매칭 실패: 한 명이 신청하지 않은 경우", () => {
       // given
-      const a = generateMockClubMemberBy("lunch");
-      const b = generateMockClubMemberBy("lunch");
+      const a = generateMockLunchClubMember();
+      const b = generateMockLunchClubMember();
 
       // when
       a.hasAppliedForLunch = true;
@@ -108,7 +111,7 @@ describe("LunchClub", () => {
   describe("pair", () => {
     test("혼자서 신청", () => {
       // given
-      const a = generateMockClubMemberBy("lunch");
+      const a = generateMockLunchClubMember();
 
       // when
       a.hasAppliedForLunch = true;
@@ -120,8 +123,8 @@ describe("LunchClub", () => {
 
     test("매칭 실패", () => {
       // given
-      const a = generateMockClubMemberBy("lunch");
-      const b = generateMockClubMemberBy("lunch");
+      const a = generateMockLunchClubMember();
+      const b = generateMockLunchClubMember();
 
       // when
       a.hasAppliedForLunch = true;
@@ -135,10 +138,10 @@ describe("LunchClub", () => {
 
     test("매칭 성공", () => {
       // given
-      const a = generateMockClubMemberBy("lunch");
-      const b = generateMockClubMemberBy("lunch");
-      const c = generateMockClubMemberBy("lunch");
-      const d = generateMockClubMemberBy("lunch");
+      const a = generateMockLunchClubMember();
+      const b = generateMockLunchClubMember();
+      const c = generateMockLunchClubMember();
+      const d = generateMockLunchClubMember();
 
       // when
       a.hasAppliedForLunch = true;
