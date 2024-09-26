@@ -93,6 +93,20 @@ describe("ClubMember", () => {
     expect(a.isPersonExcluded(c.name)).toBe(false);
   });
 
+  test("isPersonInLogs", () => {
+    // given
+    const a = generateMockClubMemberBy(CLUB_TYPES["lunch-dinner"]);
+    const b = generateMockClubMemberBy(CLUB_TYPES["lunch-dinner"]);
+    const c = generateMockClubMemberBy(CLUB_TYPES["lunch-dinner"]);
+
+    // when
+    a.logs = a.logs.split(", ").concat(b.id).join(", ");
+
+    // then
+    expect(a.isPersonInLogs(b.id)).toBe(true);
+    expect(a.isPersonInLogs(c.id)).toBe(false);
+  });
+
   test("hasMatchingLunchClubKeywords", () => {
     // given
     const a = generateMockClubMemberBy(CLUB_TYPES["lunch-dinner"]);

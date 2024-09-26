@@ -25,6 +25,7 @@ export const generateMockClubMemberBy = (clubType: ClubType): ClubMember => {
     clubType,
     generateGroupMembers(),
     generateExcludedMembers(),
+    generateLogs(),
     generateLunchClubKeywords(clubType),
     generateDinnerClubLocations(clubType),
     generateHasAppliedForLunch(clubType),
@@ -57,6 +58,12 @@ const generateGroupMembers = (): string => {
 };
 
 const generateExcludedMembers = (): string => {
+  return Array.from({ length: faker.number.int({ min: 0, max: 32 }) }, () =>
+    faker.person.fullName()
+  ).join(", ");
+};
+
+const generateLogs = (): string => {
   return Array.from({ length: faker.number.int({ min: 0, max: 32 }) }, () =>
     faker.person.fullName()
   ).join(", ");

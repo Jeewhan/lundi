@@ -14,6 +14,7 @@ export default class ClubMember {
     public clubType: ClubType,
     public groupMembers: string,
     public excludedMembers: string,
+    public logs: string,
     public lunchClubKeywords: string,
     public dinnerClubLocations: string,
     public hasAppliedForLunch: boolean,
@@ -55,6 +56,10 @@ export default class ClubMember {
     return this.excludedMembers.includes(name);
   }
 
+  public isPersonInLogs(id: ClubMember["id"]): boolean {
+    return this.logs.includes(id);
+  }
+
   public hasMatchingLunchClubKeywords(
     lunchClubKeywords: ClubMember["lunchClubKeywords"]
   ) {
@@ -74,6 +79,10 @@ export default class ClubMember {
     }
 
     if (this.isPersonExcluded(member.name)) {
+      return 0;
+    }
+
+    if (this.isPersonInLogs(member.id)) {
       return 0;
     }
 
