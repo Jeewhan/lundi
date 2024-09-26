@@ -21,6 +21,50 @@ class LunchClub {
       ? 0
       : (leftScore + rightScore) / 2;
   }
+
+  public pair(members: ClubMember[]) {
+    const lunchMembers = members.filter((member) =>
+      member.isEligibleForLunch()
+    );
+    const scores = new Map<number, [ClubMember, ClubMember][]>();
+    const matched = new Set<string>();
+    const result = [];
+
+    if (lunchMembers.length < 2) {
+      return [];
+    }
+
+    for (let i = 0; i < lunchMembers.length; i += 1) {
+      for (let j = i + 1; j < lunchMembers.length; j += 1) {
+        const left = lunchMembers[i];
+        const right = lunchMembers[j];
+
+        const score = this.score(left, right);
+
+        if (score) {
+          scores.set(score, [...(scores.get(score) ?? []), [left, right]]);
+        }
+      }
+    }
+
+    const sortedScores = Array.from(scores.entries()).sort(
+      ([aScore], [bScore]) => bScore - aScore
+    );
+
+    for (const [, pairs] of sortedScores) {
+      for (const pair of pairs) {
+        const [left, right] = pair;
+
+        if (!matched.has(left.id) && !matched.has(right.id)) {
+          matched.add(left.id);
+          matched.add(right.id);
+          result.push(pair);
+        }
+      }
+    }
+
+    return result;
+  }
 }
 
 export default LunchClub;

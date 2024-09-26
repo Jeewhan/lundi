@@ -100,4 +100,57 @@ describe("LunchClub", () => {
       expect(lunchClub.score(a, b)).toEqual(0);
     });
   });
+
+  describe("pair", () => {
+    test("혼자서 신청", () => {
+      // given
+      const a = generateMockClubMemberBy("lunch");
+
+      // when
+      a.hasAppliedForLunch = true;
+      a.lunchClubKeywords = keywords[0];
+
+      // then
+      expect(lunchClub.pair([a])).toEqual([]);
+    });
+
+    test("매칭 실패", () => {
+      // given
+      const a = generateMockClubMemberBy("lunch");
+      const b = generateMockClubMemberBy("lunch");
+
+      // when
+      a.hasAppliedForLunch = true;
+      b.hasAppliedForLunch = true;
+      a.lunchClubKeywords = keywords[0];
+      b.lunchClubKeywords = keywords[1];
+
+      // then
+      expect(lunchClub.pair([a, b])).toEqual([]);
+    });
+
+    test("매칭 성공", () => {
+      // given
+      const a = generateMockClubMemberBy("lunch");
+      const b = generateMockClubMemberBy("lunch");
+      const c = generateMockClubMemberBy("lunch");
+      const d = generateMockClubMemberBy("lunch");
+
+      // when
+      a.hasAppliedForLunch = true;
+      b.hasAppliedForLunch = true;
+      c.hasAppliedForLunch = true;
+      d.hasAppliedForLunch = true;
+      a.lunchClubKeywords = keywords[0];
+      b.lunchClubKeywords = [keywords[0], keywords[1]].join(", ");
+      c.lunchClubKeywords = [keywords[2], keywords[3], keywords[4]].join(", ");
+      d.lunchClubKeywords = [keywords[3], keywords[4], keywords[5]].join(", ");
+
+      // then
+      expect(lunchClub.pair([a, b, c, d])).toEqual([
+        [c, d],
+        [a, b],
+      ]);
+    });
+  });
 });
