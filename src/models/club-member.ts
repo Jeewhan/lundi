@@ -63,8 +63,8 @@ export default class ClubMember {
   public getMatchingLunchClubKeywords(
     lunchClubKeywords: ClubMember["lunchClubKeywords"]
   ) {
-    const keywords = this.lunchClubKeywords.split(", ");
-    const otherKeywords = lunchClubKeywords.split(", ");
+    const keywords = this.lunchClubKeywords.split(",");
+    const otherKeywords = lunchClubKeywords.split(",");
 
     return keywords.filter((keyword) => otherKeywords.includes(keyword));
   }

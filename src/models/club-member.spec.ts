@@ -116,7 +116,7 @@ describe("ClubMember", () => {
 
     // when
     a.lunchClubKeywords = keywords[0];
-    b.lunchClubKeywords = [keywords[0], keywords[1]].join(", ");
+    b.lunchClubKeywords = [keywords[0], keywords[1]].join(",");
 
     c.lunchClubKeywords = keywords[1];
     d.lunchClubKeywords = keywords[2];
@@ -142,7 +142,7 @@ describe("ClubMember", () => {
       b.hasAppliedForLunch = true;
 
       a.lunchClubKeywords = keywords[0];
-      b.lunchClubKeywords = [keywords[0], keywords[1]].join(", ");
+      b.lunchClubKeywords = [keywords[0], keywords[1]].join(",");
 
       expect(a.scoreLunchMatch(b)).toBeGreaterThanOrEqual(1);
     });
