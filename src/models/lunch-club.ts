@@ -27,11 +27,7 @@ class LunchClub {
       : (leftScore + rightScore) / 2;
   }
 
-  public pair(members: LunchClubMember[]) {
-    // TODO: 이것을 pair가 아닌 fetch 시점에 처리해줄 것.
-    const lunchClubMembers = shuffle(
-      members.filter((member) => member.isEligibleForLunch())
-    );
+  public pair(lunchClubMembers: LunchClubMember[]) {
     const scores = new Map<number, [LunchClubMember, LunchClubMember][]>();
     const matched = new Set<string>();
     const result = [] as [LunchClubMember, LunchClubMember][];
@@ -96,30 +92,34 @@ class LunchClub {
   public async fetch() {
     const members = await this.sheets.read("members");
 
-    return members.map(
-      (member: any) =>
-        new LunchClubMember(
-          member.name,
-          member.id,
-          member.group,
-          member.phone,
-          member.introduce,
-          member.clubType,
-          member.groupMembers,
-          member.excludedMembers,
-          member.logs,
-          member.lunchClubKeywords,
-          member.dinnerClubLocations,
-          member.hasAppliedForLunch,
-          member.dinnerPreferredDateTime
-        )
-    );
+    const lunchClubMembers = members
+      .filter((member: any) => member.isEligibleForLunch())
+      .map(
+        (member: any) =>
+          new LunchClubMember(
+            member.name,
+            member.id,
+            member.group,
+            member.phone,
+            member.introduce,
+            member.clubType,
+            member.groupMembers,
+            member.excludedMembers,
+            member.logs,
+            member.lunchClubKeywords,
+            member.dinnerClubLocations,
+            member.hasAppliedForLunch,
+            member.dinnerPreferredDateTime
+          )
+      );
+
+    return shuffle<LunchClubMember>(lunchClubMembers);
   }
 
   public async run() {
-    const members = await this.fetch();
+    const lunchClubMembers = await this.fetch();
 
-    const pairs = this.pair(members);
+    const pairs = this.pair(lunchClubMembers);
 
     await this.notice(pairs);
   }
