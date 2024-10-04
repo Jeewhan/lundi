@@ -43,8 +43,10 @@ export default class ClubMember {
 
   public isEligibleForDinner(): boolean {
     return (
-      this.clubType === CLUB_TYPES.dinner ||
-      this.clubType === CLUB_TYPES["lunch-dinner"]
+      (this.clubType === CLUB_TYPES.dinner ||
+        this.clubType === CLUB_TYPES["lunch-dinner"]) &&
+      this.dinnerClubLocations.split(",").length > 0 &&
+      this.dinnerPreferredDateTimeList.length > 0
     );
   }
 
@@ -95,5 +97,61 @@ export class LunchClubMember extends ClubMember {
     }
 
     return this.getMatchingLunchClubKeywords(member.lunchClubKeywords).length;
+  }
+}
+
+export class DinnerClubMember extends ClubMember {
+  public scoreDinnerMatch(member: DinnerClubMember): number {
+    const locations = this.dinnerClubLocations.split(",");
+
+    if (!(member instanceof DinnerClubMember)) {
+      throw new Error(
+        `${(member as ClubMember).name}은 DinnerClubMember가 아닙니다.`
+      );
+    }
+
+    if (!this.isEligibleForDinner()) {
+      return 0;
+    }
+
+    if (this.isPersonInGroup(member.name)) {
+      return 0;
+    }
+
+    if (this.isPersonExcluded(member.name)) {
+      return 0;
+    }
+
+    if (this.isPersonInLogs(member.id)) {
+      return 0;
+    }
+
+    if (
+      this.dinnerPreferredDateTimeList.every(
+        (dateTime) => !member.dinnerPreferredDateTimeList.includes(dateTime)
+      )
+    ) {
+      return 0;
+    }
+
+    if (
+      locations.every(
+        (location) => !member.dinnerClubLocations.includes(location)
+      )
+    ) {
+      return 0;
+    }
+
+    return (
+      this.dinnerPreferredDateTimeList.reduce((score, datetime) => {
+        return (
+          score +
+          (member.dinnerPreferredDateTimeList.includes(datetime) ? 1 : 0)
+        );
+      }, 0) +
+      locations.reduce((score, location) => {
+        return score + (member.dinnerClubLocations.includes(location) ? 1 : 0);
+      }, 0)
+    );
   }
 }
