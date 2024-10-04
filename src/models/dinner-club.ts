@@ -1,8 +1,12 @@
 import { GATHER_DINNER_CLUB } from "../constants";
 import { Messenger } from "../services/messenger";
+import { Sheets } from "../services/sheets";
 
 class DinnerClub {
-  constructor(private readonly messenger: Messenger) {}
+  constructor(
+    private readonly messenger: Messenger,
+    private readonly sheets: Sheets
+  ) {}
 
   public async sendGatherMessage() {
     await this.messenger.post(

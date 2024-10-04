@@ -1,13 +1,8 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 import { keywords } from "../constants";
-import {
-  generateMockClubMemberBy,
-  generateMockLunchClubMember,
-} from "../utils/mock";
+import { generateMockLunchClubMember } from "../utils/mock";
 import LunchClub from "./lunch-club";
-import { Messenger } from "../services/messenger";
-import { Sheets } from "../services/sheets";
 
 // TODO: mock -> fixture
 // TODO: fixture는 랜덤성이 없어야 한다. 상대적으로 비교해선 안 된다. 그러면 동어반복이 되어버린다.

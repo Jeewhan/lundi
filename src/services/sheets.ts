@@ -4,10 +4,10 @@ export interface Sheets {
 }
 
 class GoogleSpreadSheets implements Sheets {
+  constructor(private readonly apiUrl: string) {}
+
   public async read(sheetName: string): Promise<any> {
-    const response = await fetch(
-      `${process.env.APPS_SCRIPT_API_URL as string}?sheet=${sheetName}`
-    );
+    const response = await fetch(`${this.apiUrl}?sheet=${sheetName}`);
 
     return await response.json();
   }
@@ -17,13 +17,10 @@ class GoogleSpreadSheets implements Sheets {
       payload: data,
     });
 
-    await fetch(
-      `${process.env.APPS_SCRIPT_API_URL as string}?sheet=${sheetName}`,
-      {
-        method: "POST",
-        body: requestBody,
-      }
-    );
+    await fetch(`${this.apiUrl}?sheet=${sheetName}`, {
+      method: "POST",
+      body: requestBody,
+    });
   }
 }
 
