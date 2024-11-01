@@ -122,6 +122,21 @@ class Slack implements Messenger {
       user,
     });
   }
+
+  public async conversationsMembersList(channel: string) {
+    const response = await this.slack.client.conversations.members({
+      channel,
+    });
+
+    if (response.response_metadata?.next_cursor) {
+      return await this.slack.client.conversations.members({
+        channel,
+        cursor: response.response_metadata?.next_cursor,
+      });
+    } else {
+      return response;
+    }
+  }
 }
 
 export default Slack;
