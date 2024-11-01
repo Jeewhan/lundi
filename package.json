@@ -25,10 +25,12 @@
   "description": "",
   "dependencies": {
     "@slack/bolt": "^3.21.4",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "luxon": "^3.5.0"
   },
   "devDependencies": {
     "@faker-js/faker": "^9.0.1",
+    "@types/luxon": "^3.4.2",
     "@types/node": "^22.5.4",
     "@vitest/coverage-v8": "^2.1.1",
     "concurrently": "^9.0.1",
