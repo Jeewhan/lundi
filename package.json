@@ -26,6 +26,7 @@
   "dependencies": {
     "@slack/bolt": "^3.21.4",
     "dotenv": "^16.4.5",
+    "google-spreadsheet": "^4.1.4",
     "luxon": "^3.5.0"
   },
   "devDependencies": {
