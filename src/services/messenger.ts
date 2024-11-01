@@ -1,4 +1,8 @@
 import { App, Block } from "@slack/bolt";
+import type { ConversationsHistoryResponse } from "@slack/web-api/dist/response/ConversationsHistoryResponse";
+import type { ConversationsRepliesResponse } from "@slack/web-api/dist/response/ConversationsRepliesResponse";
+import type { ConversationsMembersResponse } from "@slack/web-api/dist/response/ConversationsMembersResponse";
+import type { UsersInfoResponse } from "@slack/web-api/dist/response/UsersInfoResponse";
 
 export interface Messenger {
   post(channel: string, text: string, blocks?: Block[]): Promise<void>;
@@ -6,6 +10,19 @@ export interface Messenger {
   createChannel(name: string): Promise<string>;
   invite(channel: string, users: string[]): Promise<void>;
   createBlocks(text: string, actionOptions: Block[]): Block[];
+  conversationHistories(
+    channel: string,
+    oldest?: string
+  ): Promise<ConversationsHistoryResponse>;
+  conversationsReplies(
+    channel: string,
+    ts: string
+  ): Promise<ConversationsRepliesResponse>;
+  conversationsMembers(
+    channel: string,
+    cursor?: string
+  ): Promise<ConversationsMembersResponse>;
+  usersInfo(user: string): Promise<UsersInfoResponse>;
 }
 
 class Slack implements Messenger {
@@ -75,6 +92,35 @@ class Slack implements Messenger {
       },
       ...actionOptions,
     ];
+  }
+
+  public async conversationHistories(channel: string, oldest?: string) {
+    return await this.slack.client.conversations.history({
+      channel,
+      oldest,
+      include_all_metadata: true,
+      inclusive: true,
+    });
+  }
+
+  public async conversationsReplies(channel: string, ts: string) {
+    return await this.slack.client.conversations.replies({
+      channel,
+      ts,
+    });
+  }
+
+  public async conversationsMembers(channel: string, cursor?: string) {
+    return await this.slack.client.conversations.members({
+      channel,
+      cursor,
+    });
+  }
+
+  public async usersInfo(user: string) {
+    return await this.slack.client.users.info({
+      user,
+    });
   }
 }
 
