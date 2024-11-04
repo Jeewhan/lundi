@@ -13,12 +13,18 @@ export class MincedGarlic {
     private readonly doc: GoogleSpreadsheet
   ) {}
 
-  public async checkYesterdaysAttendance() {
+  public async checkMonthlyAttendance() {
     const now = DateTime.now().setZone("Asia/Seoul");
-    const yesterday = now.minus({ days: 1 });
 
-    const oldest = yesterday.startOf("day").toUnixInteger().toString();
-    const latest = now.endOf("day").toUnixInteger().toString();
+    // const yesterday = now.minus({ days: 1 });
+    // const oldest = yesterday.startOf("day").toUnixInteger().toString();
+    // const latest = now.endOf("day").toUnixInteger().toString();
+
+    const startOfMonth = now.startOf("month");
+    const endOfMonth = now.endOf("month");
+
+    const oldest = startOfMonth.toUnixInteger().toString();
+    const latest = endOfMonth.toUnixInteger().toString();
 
     const { messages } = await this.messenger.conversationHistories(
       process.env.GARLIC_CHANNEL_ID!,
@@ -42,12 +48,18 @@ export class MincedGarlic {
         )
     );
 
+    const keywordPattern = /마늘|출근/; // "마늘" 또는 "출근" 포함
+    const timePattern = /(?:0?[0-9]|1[0-9]|2[0-3]):(?:[0-5][0-9])/; // HH:MM 형식 (07:22 or 7:22)
+
     const list = replies
       .flatMap((reply) => reply.messages)
       .filter((message): message is MessageElement => !!message)
       .filter((message) => message.bot_id !== "B01")
       .filter((message) => message.type === "message")
-      .filter((message) => message.text!.includes("마늘"))
+      .filter((message) => {
+        const text = message.text!;
+        return keywordPattern.test(text) || timePattern.test(text);
+      })
       .sort((a, b) => Number(a.ts) - Number(b.ts))
       .map(
         (message) =>

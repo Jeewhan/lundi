@@ -31,4 +31,4 @@ const doc = new GoogleSpreadsheet(
 
 const mincedGarlic = new MincedGarlic(slack, doc);
 
-mincedGarlic.checkYesterdaysAttendance();
+mincedGarlic.checkMonthlyAttendance();
