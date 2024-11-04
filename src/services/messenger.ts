@@ -12,7 +12,10 @@ export interface Messenger {
   createBlocks(text: string, actionOptions: Block[]): Block[];
   conversationHistories(
     channel: string,
-    oldest?: string
+    options?: {
+      oldest: string;
+      latest: string;
+    }
   ): Promise<ConversationsHistoryResponse>;
   conversationsReplies(
     channel: string,
@@ -94,12 +97,15 @@ class Slack implements Messenger {
     ];
   }
 
-  public async conversationHistories(channel: string, oldest?: string) {
+  public async conversationHistories(
+    channel: string,
+    options?: { oldest?: string; latest?: string }
+  ) {
     return await this.slack.client.conversations.history({
       channel,
-      oldest,
       include_all_metadata: true,
       inclusive: true,
+      ...(options && { oldest: options.oldest, latest: options.latest }),
     });
   }
 

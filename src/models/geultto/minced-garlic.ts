@@ -14,16 +14,15 @@ export class MincedGarlic {
   ) {}
 
   public async checkYesterdaysAttendance() {
-    const oldest = DateTime.now()
-      .setZone("Asia/Seoul")
-      .minus({ days: 1 })
-      .startOf("day")
-      .toUnixInteger()
-      .toString();
+    const now = DateTime.now().setZone("Asia/Seoul");
+    const yesterday = now.minus({ days: 1 });
+
+    const oldest = yesterday.startOf("day").toUnixInteger().toString();
+    const latest = now.endOf("day").toUnixInteger().toString();
 
     const { messages } = await this.messenger.conversationHistories(
       process.env.GARLIC_CHANNEL_ID!,
-      oldest
+      { oldest, latest }
     );
 
     if (!messages) {
@@ -53,10 +52,10 @@ export class MincedGarlic {
       .map(
         (message) =>
           [
+            DateTime.fromMillis(Number(message.ts) * 1000)
+              .set({ second: 0 })
+              .toFormat("yyyy-MM-dd HH:mm:ss"),
             message.user,
-            DateTime.fromMillis(Number(message.ts) * 1000).toFormat(
-              "yyyy-MM-dd HH:mm:ss"
-            ),
           ] as [string, string]
       );
 
@@ -64,11 +63,28 @@ export class MincedGarlic {
 
     const sheet = this.doc.sheetsByTitle["출근장부"];
 
-    for (const [user, datetime] of list) {
-      await sheet.addRow({
-        datetime: datetime,
-        user: user,
-      });
-    }
+    const rows = await sheet.getRows();
+
+    const existing = rows.map((row) => [
+      DateTime.fromFormat(row.get("datetime"), "M월 dd일 HH:mm")
+        .set({ year: now.year })
+        .toFormat("yyyy-MM-dd HH:mm:ss"),
+      row.get("user"),
+    ]);
+
+    const freshList = list.filter(
+      (item) =>
+        !existing.some(
+          (existingItem) =>
+            existingItem[0] === item[0] && existingItem[1] === item[1]
+        )
+    );
+
+    await sheet.addRows(
+      freshList.map(([datetime, user]) => ({
+        datetime,
+        user,
+      }))
+    );
   }
 }
