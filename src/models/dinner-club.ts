@@ -1,4 +1,7 @@
-import { dinnerPreferredDateTimes, GATHER_DINNER_CLUB } from "../constants";
+import {
+  dinnerPreferredDateTimes,
+  GATHER_DINNER_CLUB,
+} from "../shared/constants";
 import { Messenger } from "../services/messenger";
 import { Sheets } from "../services/sheets";
 import { shuffle } from "../utils/shuffle";

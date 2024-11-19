@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-import { keywords } from "../constants";
+import { keywords } from "../shared/constants";
 import { generateMockLunchClubMember } from "../utils/mock";
 import LunchClub from "./lunch-club";
 

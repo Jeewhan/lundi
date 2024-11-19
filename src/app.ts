@@ -14,7 +14,7 @@ import {
   AwsResponse,
 } from "@slack/bolt/dist/receivers/AwsLambdaReceiver";
 
-import { GATHER_DINNER_CLUB, GATHER_LUNCH_CLUB } from "./constants";
+import { GATHER_DINNER_CLUB, GATHER_LUNCH_CLUB } from "./shared/constants";
 import Slack from "./services/messenger";
 
 const requestGather = async (body: BodyInit) => {

@@ -1,7 +1,11 @@
 import { describe, test, expect, expectTypeOf } from "vitest";
 
 import ClubMember from "./club-member";
-import { CLUB_TYPES, dinnerPreferredDateTimes, keywords } from "../constants";
+import {
+  CLUB_TYPES,
+  dinnerPreferredDateTimes,
+  keywords,
+} from "../shared/constants";
 import {
   faker,
   generateMockClubMemberBy,

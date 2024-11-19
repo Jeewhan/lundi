@@ -6,7 +6,7 @@ import {
   groups,
   keywords,
   regions,
-} from "../constants";
+} from "../shared/constants";
 import ClubMember, { LunchClubMember } from "../models/club-member";
 
 export const faker = new Faker({

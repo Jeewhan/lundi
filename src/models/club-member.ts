@@ -1,4 +1,4 @@
-import { CLUB_TYPES, ClubType, groups } from "../constants";
+import { CLUB_TYPES, ClubType, groups } from "../shared/constants";
 
 // TODO: scoring 을 할 때에만 따라다니는 애들 vs 그렇지 않은 애들.
 // TODO: 같이 다니는 친구들과 그렇지 않은 친구들의 분리.

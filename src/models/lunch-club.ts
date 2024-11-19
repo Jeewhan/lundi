@@ -1,4 +1,4 @@
-import { GATHER_LUNCH_CLUB } from "../constants";
+import { GATHER_LUNCH_CLUB } from "../shared/constants";
 import { Messenger } from "../services/messenger";
 import { Sheets } from "../services/sheets";
 import { shuffle } from "../utils/shuffle";
