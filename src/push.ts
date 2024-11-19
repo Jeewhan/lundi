@@ -1,24 +1,33 @@
 import "dotenv/config";
 import { App } from "@slack/bolt";
+import { JWT } from "google-auth-library";
+import { GoogleSpreadsheet } from "google-spreadsheet";
 
-import LunchClub from "./models/lunch-club";
-import DinnerClub from "./models/dinner-club";
+import { Invitation } from "./entities/invitation";
 
 import Slack from "./services/messenger";
-import GoogleSpreadSheets from "./services/sheets";
+
+import serviceAccountCredentials from "../sheet-381101-882712223151.json";
 
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
   signingSecret: process.env.SLACK_SIGNING_SECRET,
 });
-
 const slack = new Slack(app);
-const sheets = new GoogleSpreadSheets(
-  process.env.APPS_SCRIPT_API_URL as string,
+
+const serviceAccountAuth = new JWT({
+  email: serviceAccountCredentials.client_email,
+  key: serviceAccountCredentials.private_key,
+  scopes: [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive.file",
+  ],
+});
+const doc = new GoogleSpreadsheet(
+  process.env.MEMOIR_17_SHEET_ID as string,
+  serviceAccountAuth,
 );
 
-const lunchClub = new LunchClub(slack, sheets);
-const dinnerClub = new DinnerClub(slack, sheets);
+const invitation = new Invitation(slack, doc);
 
-lunchClub.sendGatherMessage();
-dinnerClub.sendGatherMessage();
+invitation.sendLunchDinnerClubAnnouncement();

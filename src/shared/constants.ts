@@ -1,6 +1,8 @@
 export const GATHER_LUNCH_CLUB = "gather-lunch-club";
 export const GATHER_DINNER_CLUB = "gather-dinner-club";
 
+export const LUNCH_CLUB_JOIN_ACTION = "lunch-club-join-action";
+export const DINNER_CLUB_JOIN_ACTION = "dinner-club-join-action";
 export const LUNCH_DINNER_CLUB_JOIN_ACTION = "lunch-dinner-club-join-action";
 
 export const CLUB_TYPES = {
