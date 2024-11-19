@@ -24,11 +24,13 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@mobily/ts-belt": "^3.13.1",
     "@slack/bolt": "^3.21.4",
     "dotenv": "^16.4.5",
     "google-auth-library": "^9.14.2",
     "google-spreadsheet": "^4.1.4",
-    "luxon": "^3.5.0"
+    "luxon": "^3.5.0",
+    "ts-pattern": "^5.5.0"
   },
   "devDependencies": {
     "@faker-js/faker": "^9.0.1",
