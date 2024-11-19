@@ -14,7 +14,7 @@ const app = new App({
 
 const slack = new Slack(app);
 const sheets = new GoogleSpreadSheets(
-  process.env.APPS_SCRIPT_API_URL as string
+  process.env.APPS_SCRIPT_API_URL as string,
 );
 
 const lunchClub = new LunchClub(slack, sheets);

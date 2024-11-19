@@ -7,14 +7,14 @@ import { LunchClubMember } from "./club-member";
 class LunchClub {
   constructor(
     private readonly messenger: Messenger,
-    private readonly sheets: Sheets
+    private readonly sheets: Sheets,
   ) {}
 
   public async sendGatherMessage() {
     await this.messenger.post(
       process.env.SLACK_LUNCH_CHANNEL as string,
       "런치클럽🍜 참가신청을 받습니다!",
-      this.messenger.createBlocks(gatherText, gatherActionOptions)
+      this.messenger.createBlocks(gatherText, gatherActionOptions),
     );
   }
 
@@ -50,7 +50,7 @@ class LunchClub {
     }
 
     const sortedScores = Array.from(scores.entries()).sort(
-      ([aScore], [bScore]) => bScore - aScore
+      ([aScore], [bScore]) => bScore - aScore,
     );
 
     for (const [, pairs] of sortedScores) {
@@ -72,7 +72,7 @@ class LunchClub {
     for (const [left, right] of pairs) {
       const channel = await this.messenger.direct(
         [left.id, right.id, process.env.LUNDI_MANAGER_SLACK_ID as string],
-        getNoticeText(left, right)
+        getNoticeText(left, right),
       );
 
       await this.log([left, right], channel);
@@ -109,8 +109,8 @@ class LunchClub {
             member.lunchClubKeywords,
             member.dinnerClubLocations,
             member.hasAppliedForLunch,
-            member.dinnerPreferredDateTime
-          )
+            member.dinnerPreferredDateTime,
+          ),
       );
 
     return shuffle<LunchClubMember>(lunchClubMembers);
@@ -167,7 +167,7 @@ const gatherActionOptions = [
 
 const getNoticeText = (
   left: LunchClubMember,
-  right: LunchClubMember
+  right: LunchClubMember,
 ) => `안녕하세요, 런치클럽 매칭이 완료되었습니다!
 <@${left.id}>님께서 모임을 이끌어주세요 :)
 이틀 내에 답이 없다면 다른분이 먼저 이야기를 꺼내주세요.

@@ -10,7 +10,7 @@ import { GoogleSpreadsheet } from "google-spreadsheet";
 export class MincedGarlic {
   constructor(
     private readonly messenger: Messenger,
-    private readonly doc: GoogleSpreadsheet
+    private readonly doc: GoogleSpreadsheet,
   ) {}
 
   public async checkMonthlyAttendance() {
@@ -28,7 +28,7 @@ export class MincedGarlic {
 
     const { messages } = await this.messenger.conversationHistories(
       process.env.GARLIC_CHANNEL_ID!,
-      { oldest, latest }
+      { oldest, latest },
     );
 
     if (!messages) {
@@ -43,9 +43,9 @@ export class MincedGarlic {
         .map((ts) =>
           this.messenger.conversationsReplies(
             process.env.GARLIC_CHANNEL_ID!,
-            ts
-          )
-        )
+            ts,
+          ),
+        ),
     );
 
     const keywordPattern = /마늘|출근/; // "마늘" 또는 "출근" 포함
@@ -68,7 +68,7 @@ export class MincedGarlic {
               .set({ second: 0 })
               .toFormat("yyyy-MM-dd HH:mm:ss"),
             message.user,
-          ] as [string, string]
+          ] as [string, string],
       );
 
     await this.doc.loadInfo();
@@ -88,15 +88,15 @@ export class MincedGarlic {
       (item) =>
         !existing.some(
           (existingItem) =>
-            existingItem[0] === item[0] && existingItem[1] === item[1]
-        )
+            existingItem[0] === item[0] && existingItem[1] === item[1],
+        ),
     );
 
     await sheet.addRows(
       freshList.map(([datetime, user]) => ({
         datetime,
         user,
-      }))
+      })),
     );
   }
 }

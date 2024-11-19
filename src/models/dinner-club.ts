@@ -12,14 +12,14 @@ type Group =
 class DinnerClub {
   constructor(
     private readonly messenger: Messenger,
-    private readonly sheets: Sheets
+    private readonly sheets: Sheets,
   ) {}
 
   public async sendGatherMessage() {
     await this.messenger.post(
       process.env.SLACK_DINNER_CHANNEL as string,
       "디너클럽🍜 참가신청을 받습니다!",
-      this.messenger.createBlocks(gatherText, gatherActionOptions)
+      this.messenger.createBlocks(gatherText, gatherActionOptions),
     );
   }
 
@@ -42,8 +42,8 @@ class DinnerClub {
             member.lunchClubKeywords,
             member.dinnerClubLocations,
             member.hasAppliedForLunch,
-            member.dinnerPreferredDateTime
-          )
+            member.dinnerPreferredDateTime,
+          ),
       )
       .filter((member: any) => member.isEligibleForDinner())
       .map(
@@ -61,8 +61,8 @@ class DinnerClub {
             member.lunchClubKeywords,
             member.dinnerClubLocations,
             member.hasAppliedForLunch,
-            member.dinnerPreferredDateTime
-          )
+            member.dinnerPreferredDateTime,
+          ),
       );
 
     // return shuffle<DinnerClubMember>(dinnerClubMembers);
@@ -102,7 +102,7 @@ class DinnerClub {
     for (const group of groups) {
       const channel = await this.messenger.direct(
         group.memberIDs.concat(process.env.LUNDI_MANAGER_SLACK_ID as string),
-        group.noticeText
+        group.noticeText,
       );
 
       await this.log(group, channel);

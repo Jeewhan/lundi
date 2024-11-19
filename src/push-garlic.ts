@@ -26,7 +26,7 @@ const slack = new Slack(app);
 
 const doc = new GoogleSpreadsheet(
   process.env.GARLIC_SHEET_ID!,
-  serviceAccountAuth
+  serviceAccountAuth,
 );
 
 const mincedGarlic = new MincedGarlic(slack, doc);

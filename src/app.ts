@@ -41,7 +41,7 @@ const slack = new Slack(app);
 const handler = async (
   event: AwsEvent,
   context: any,
-  callback: AwsCallback
+  callback: AwsCallback,
 ): Promise<AwsResponse> => {
   const handler = await awsLambdaReceiver.start();
   return handler(event, context, callback);
@@ -64,9 +64,9 @@ app.action(
 
     await slack.direct(
       [body.user.id],
-      "----- 런치클럽 참여신청이 완료되었습니다."
+      "----- 런치클럽 참여신청이 완료되었습니다.",
     );
-  }
+  },
 );
 
 app.action(
@@ -92,9 +92,9 @@ app.action(
       [body.user.id],
       `----- 디너클럽 참여신청이 완료되었습니다. ${payload.selected_options
         .map((option) => option.value)
-        .join(", ")}`
+        .join(", ")}`,
     );
-  }
+  },
 );
 
 module.exports.handler = handler;

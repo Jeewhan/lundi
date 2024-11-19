@@ -12,7 +12,7 @@ class DinnerGroup {
   }
 
   private getIntersection(
-    getValues: (member: DinnerClubMember) => string[]
+    getValues: (member: DinnerClubMember) => string[],
   ): string[] {
     return this.members.reduce((intersection, member) => {
       return intersection.filter((value) => getValues(member).includes(value));
@@ -21,13 +21,13 @@ class DinnerGroup {
 
   public get locations(): string[] {
     return this.getIntersection(({ dinnerClubLocations }) =>
-      dinnerClubLocations.split(",")
+      dinnerClubLocations.split(","),
     );
   }
 
   public get datetimes(): string[] {
     return this.getIntersection(
-      ({ dinnerPreferredDateTimeList }) => dinnerPreferredDateTimeList
+      ({ dinnerPreferredDateTimeList }) => dinnerPreferredDateTimeList,
     );
   }
 

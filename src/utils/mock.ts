@@ -27,7 +27,7 @@ export const generateMockLunchClubMember = () => {
     generateLunchClubKeywords(CLUB_TYPES.lunch),
     generateDinnerClubLocations(CLUB_TYPES.lunch),
     generateHasAppliedForLunch(CLUB_TYPES.lunch),
-    generateDinnerPreferredDateTime(CLUB_TYPES.lunch)
+    generateDinnerPreferredDateTime(CLUB_TYPES.lunch),
   );
 };
 
@@ -45,7 +45,7 @@ export const generateMockClubMemberBy = (clubType: ClubType): ClubMember => {
     generateLunchClubKeywords(clubType),
     generateDinnerClubLocations(clubType),
     generateHasAppliedForLunch(clubType),
-    generateDinnerPreferredDateTime(clubType)
+    generateDinnerPreferredDateTime(clubType),
   );
 };
 
@@ -69,19 +69,19 @@ const generateIntroduce = (): string => {
 
 const generateGroupMembers = (): string => {
   return Array.from({ length: faker.number.int({ min: 0, max: 4 }) }, () =>
-    faker.person.fullName()
+    faker.person.fullName(),
   ).join(", ");
 };
 
 const generateExcludedMembers = (): string => {
   return Array.from({ length: faker.number.int({ min: 0, max: 32 }) }, () =>
-    faker.person.fullName()
+    faker.person.fullName(),
   ).join(", ");
 };
 
 const generateLogs = (): string => {
   return Array.from({ length: faker.number.int({ min: 0, max: 32 }) }, () =>
-    faker.person.fullName()
+    faker.person.fullName(),
   ).join(", ");
 };
 

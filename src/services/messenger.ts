@@ -15,15 +15,15 @@ export interface Messenger {
     options?: {
       oldest: string;
       latest: string;
-    }
+    },
   ): Promise<ConversationsHistoryResponse>;
   conversationsReplies(
     channel: string,
-    ts: string
+    ts: string,
   ): Promise<ConversationsRepliesResponse>;
   conversationsMembers(
     channel: string,
-    cursor?: string
+    cursor?: string,
   ): Promise<ConversationsMembersResponse>;
   usersInfo(user: string): Promise<UsersInfoResponse>;
 }
@@ -76,7 +76,7 @@ class Slack implements Messenger {
 
     if (!response.ok) {
       throw new Error(
-        `Failed to invite ${users.join(", ")} to ${channel}: ${response.error}`
+        `Failed to invite ${users.join(", ")} to ${channel}: ${response.error}`,
       );
     }
   }
@@ -99,7 +99,7 @@ class Slack implements Messenger {
 
   public async conversationHistories(
     channel: string,
-    options?: { oldest?: string; latest?: string }
+    options?: { oldest?: string; latest?: string },
   ) {
     return await this.slack.client.conversations.history({
       channel,

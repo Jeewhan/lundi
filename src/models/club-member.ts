@@ -18,7 +18,7 @@ export default class ClubMember {
     public lunchClubKeywords: string,
     public dinnerClubLocations: string,
     public hasAppliedForLunch: boolean,
-    public dinnerPreferredDateTime: string
+    public dinnerPreferredDateTime: string,
   ) {}
 
   get dinnerPreferredDateTimeList(): string[] {
@@ -65,7 +65,7 @@ export default class ClubMember {
 
 export class LunchClubMember extends ClubMember {
   public getMatchingLunchClubKeywords(
-    lunchClubKeywords: ClubMember["lunchClubKeywords"]
+    lunchClubKeywords: ClubMember["lunchClubKeywords"],
   ) {
     const keywords = this.lunchClubKeywords.split(",");
     const otherKeywords = lunchClubKeywords.split(",");
@@ -76,7 +76,7 @@ export class LunchClubMember extends ClubMember {
   public scoreLunchMatch(member: LunchClubMember): number {
     if (!(member instanceof LunchClubMember)) {
       throw new Error(
-        `${(member as ClubMember).name}은 LunchClubMember가 아닙니다.`
+        `${(member as ClubMember).name}은 LunchClubMember가 아닙니다.`,
       );
     }
 
@@ -106,7 +106,7 @@ export class DinnerClubMember extends ClubMember {
 
     if (!(member instanceof DinnerClubMember)) {
       throw new Error(
-        `${(member as ClubMember).name}은 DinnerClubMember가 아닙니다.`
+        `${(member as ClubMember).name}은 DinnerClubMember가 아닙니다.`,
       );
     }
 
@@ -128,7 +128,7 @@ export class DinnerClubMember extends ClubMember {
 
     if (
       this.dinnerPreferredDateTimeList.every(
-        (dateTime) => !member.dinnerPreferredDateTimeList.includes(dateTime)
+        (dateTime) => !member.dinnerPreferredDateTimeList.includes(dateTime),
       )
     ) {
       return 0;
@@ -136,7 +136,7 @@ export class DinnerClubMember extends ClubMember {
 
     if (
       locations.every(
-        (location) => !member.dinnerClubLocations.includes(location)
+        (location) => !member.dinnerClubLocations.includes(location),
       )
     ) {
       return 0;
