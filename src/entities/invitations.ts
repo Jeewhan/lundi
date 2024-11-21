@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { GoogleSpreadsheet } from "google-spreadsheet";
 
 import { Messenger } from "../services/messenger";
@@ -7,7 +8,7 @@ import {
   LUNCH_DINNER_CLUB_JOIN_ACTION,
 } from "../shared/constants";
 
-export class Invitation {
+export class Invitations {
   constructor(
     private readonly messenger: Messenger,
     private readonly doc: GoogleSpreadsheet,
@@ -27,7 +28,7 @@ const LUNCH_DINNER_CLUB_INVITE_BUTTON_LAYOUT = [
     type: "header",
     text: {
       type: "plain_text",
-      text: "메모어 대표 네트워킹 클럽! 런치&디너클럽 모집해요 🎉",
+      text: "메모어 대표 네트워킹 클럽! 런치클럽 & 디너클럽 모집해요 🎉",
       emoji: true,
     },
   },
@@ -95,6 +96,13 @@ const LUNCH_DINNER_CLUB_INVITE_BUTTON_LAYOUT = [
     },
   },
   {
+    type: "section",
+    text: {
+      type: "mrkdwn",
+      text: `:bangbang: 런치/디너 클럽에 참여하려면 <#${process.env.MEMOIR_17_INTRODUCE_CHANNEL}> 채널에 *소개 작성이 꼭 필요합니다.*`,
+    },
+  },
+  {
     type: "actions",
     elements: [
       {
@@ -121,7 +129,7 @@ const LUNCH_DINNER_CLUB_INVITE_BUTTON_LAYOUT = [
         type: "button",
         text: {
           type: "plain_text",
-          text: "런치클럽, 디너클럽 동시참가신청",
+          text: "런치클럽 & 디너클럽 동시참가신청",
         },
         value: "join",
         action_id: LUNCH_DINNER_CLUB_JOIN_ACTION,

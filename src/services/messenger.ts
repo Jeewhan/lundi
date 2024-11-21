@@ -99,14 +99,39 @@ class Slack implements Messenger {
 
   public async conversationHistories(
     channel: string,
-    options?: { oldest?: string; latest?: string },
-  ) {
-    return await this.slack.client.conversations.history({
+    options?: { oldest?: string; latest?: string; cursor?: string },
+    accumulatedMessages: ConversationsHistoryResponse["messages"] = [],
+  ): Promise<ConversationsHistoryResponse> {
+    const response = await this.slack.client.conversations.history({
       channel,
       include_all_metadata: true,
       inclusive: true,
-      ...(options && { oldest: options.oldest, latest: options.latest }),
+      limit: 200,
+      cursor: options?.cursor,
+      ...(options && { ...options }),
     });
+
+    if (!response.messages) {
+      throw new Error("Messages is undefined");
+    }
+
+    const updatedMessages = [...accumulatedMessages, ...response.messages];
+
+    if (response.response_metadata?.next_cursor) {
+      return this.conversationHistories(
+        channel,
+        {
+          ...options,
+          cursor: response.response_metadata.next_cursor,
+        },
+        updatedMessages,
+      );
+    }
+
+    return {
+      ...response,
+      messages: updatedMessages.sort((a, b) => Number(a.ts) - Number(b.ts)),
+    };
   }
 
   public async conversationsReplies(channel: string, ts: string) {

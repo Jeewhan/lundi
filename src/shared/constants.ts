@@ -5,6 +5,17 @@ export const LUNCH_CLUB_JOIN_ACTION = "lunch-club-join-action";
 export const DINNER_CLUB_JOIN_ACTION = "dinner-club-join-action";
 export const LUNCH_DINNER_CLUB_JOIN_ACTION = "lunch-dinner-club-join-action";
 
+export const READY_FOR_JOIN_CLUB_CALLBACK_ID = "ready-for-join-club";
+export const NOT_READY_FOR_JOIN_CLUB_CALLBACK_ID = "not-ready-for-join-club";
+
+export const LUNCH_CLUB_TOPIC = "lunch-club-topic";
+export const PHONE = "phone";
+export const EXCLUDE_MEMBERS = "exclude-members";
+export const ACCEPT_DEPOSIT_POLICY = "accept-deposit-policy";
+export const ACCEPT_MATCHING_UNCERTAINTY = "accept-matching-uncertainty";
+export const ACCEPT_LIMITED_SUPPORT = "accept-limited-support";
+export const ACCEPT_PRIVACY_POLICY = "accept-privacy-policy";
+
 export const CLUB_TYPES = {
   lunch: "lunch",
   dinner: "dinner",
