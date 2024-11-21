@@ -30,6 +30,9 @@ export const 자기소개 = "자기소개";
 export const 링크 = "링크";
 export const 텍스트 = "텍스트";
 
+export const READY_FOR_JOIN_CLUB_CALLBACK_ID = "ready-for-join-club";
+export const NOT_READY_FOR_JOIN_CLUB_CALLBACK_ID = "not-ready-for-join-club";
+
 export const CLUB_TYPES = {
   lunch: "lunch",
   dinner: "dinner",
