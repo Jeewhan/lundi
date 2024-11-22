@@ -1,16 +1,14 @@
 import "dotenv/config";
+
 import { App } from "@slack/bolt";
 import { JWT } from "google-auth-library";
 import { GoogleSpreadsheet } from "google-spreadsheet";
 
-// import { Introduces } from "./entities/introduce";
-
 import Slack from "./services/messenger";
 
-import serviceAccountCredentials from "../sheet-381101-882712223151.json";
-import { Names } from "./entities/names";
 import { Invitations } from "./entities/invitations";
-import { CSV } from "./services/csv";
+
+import serviceAccountCredentials from "../sheet-381101-882712223151.json";
 
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
@@ -31,8 +29,8 @@ const doc = new GoogleSpreadsheet(
   serviceAccountAuth,
 );
 
-// const invitations = new Invitations(slack, doc);
-// invitations.sendLunchDinnerClubAnnouncement();
+const invitations = new Invitations(slack, doc);
+invitations.sendLunchDinnerClubAnnouncement();
 
 // const introduce = new Introduces(slack, doc);
 // introduce.getIntroduceChannelMessages(

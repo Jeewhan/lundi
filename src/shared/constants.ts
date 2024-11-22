@@ -8,13 +8,20 @@ export const LUNCH_DINNER_CLUB_JOIN_ACTION = "lunch-dinner-club-join-action";
 export const READY_FOR_JOIN_CLUB_CALLBACK_ID = "ready-for-join-club";
 export const NOT_READY_FOR_JOIN_CLUB_CALLBACK_ID = "not-ready-for-join-club";
 
-export const LUNCH_CLUB_TOPIC = "lunch-club-topic";
-export const PHONE = "phone";
-export const EXCLUDE_MEMBERS = "exclude-members";
-export const ACCEPT_DEPOSIT_POLICY = "accept-deposit-policy";
-export const ACCEPT_MATCHING_UNCERTAINTY = "accept-matching-uncertainty";
-export const ACCEPT_LIMITED_SUPPORT = "accept-limited-support";
-export const ACCEPT_PRIVACY_POLICY = "accept-privacy-policy";
+export const 아이디 = "아이디";
+export const 연락처 = "연락처";
+export const 만나지_않아도_될_멤버들 = "만나지_않아도_될_멤버들";
+export const 보증금_동의 = "보증금_동의";
+export const 매칭_불확실성_동의 = "매칭_불확실성_동의";
+export const 제한된_지원_동의 = "제한된_지원_동의";
+export const 개인정보_동의 = "개인정보_동의";
+export const 클럽선택 = "클럽선택";
+export const 런치클럽_관심사 = "런치클럽_관심사";
+export const 디너클럽_일시 = "디너클럽_일시";
+export const 디너클럽_장소 = "디너클럽_장소";
+
+export const 성함 = "성함";
+export const 자기소개 = "자기소개";
 
 export const CLUB_TYPES = {
   lunch: "lunch",

@@ -7,13 +7,22 @@ import {
   SlackActionMiddlewareArgs,
   ButtonAction,
   SlackViewMiddlewareArgs,
-  SlackViewAction,
+  ViewClosedAction,
+  ViewSubmitAction,
 } from "@slack/bolt";
 import {
   AwsCallback,
   AwsEvent,
   AwsResponse,
 } from "@slack/bolt/dist/receivers/AwsLambdaReceiver";
+import { GoogleSpreadsheet } from "google-spreadsheet";
+import { JWT } from "google-auth-library";
+
+import Slack from "./services/messenger";
+import { ClubJoinFormDTO } from "./dtos/club-join-form-dto";
+
+import { Member } from "./entities/member";
+import { ClubJoinModalView } from "./views/club-join-modal-view";
 
 import {
   DINNER_CLUB_JOIN_ACTION,
@@ -21,9 +30,12 @@ import {
   LUNCH_DINNER_CLUB_JOIN_ACTION,
   NOT_READY_FOR_JOIN_CLUB_CALLBACK_ID,
   READY_FOR_JOIN_CLUB_CALLBACK_ID,
+  아이디,
 } from "./shared/constants";
-import Slack from "./services/messenger";
-import { Join } from "./entities/join";
+
+import serviceAccountCredentials from "../sheet-381101-882712223151.json";
+import { UserDTO } from "./dtos/user-dto";
+import { ClubJoinRecordDTO } from "./dtos/club-join-record-dto";
 
 if (!process.env.SLACK_SIGNING_SECRET)
   throw new Error("SLACK_SIGNING_SECRET is not defined");
@@ -48,6 +60,46 @@ const handler = async (
   return handler(event, context, callback);
 };
 
+const serviceAccountAuth = new JWT({
+  email: serviceAccountCredentials.client_email,
+  key: serviceAccountCredentials.private_key,
+  scopes: [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive.file",
+  ],
+});
+const doc = new GoogleSpreadsheet(
+  process.env.MEMOIR_17_SHEET_ID as string,
+  serviceAccountAuth,
+);
+
+const beforeOpenEach = async (id: string) => {
+  await doc.loadInfo();
+
+  const joinsSheet = doc.sheetsByTitle["Joins"];
+  const joins = await joinsSheet.getRows();
+
+  const usersSheet = doc.sheetsByTitle["Users"];
+  const users = await usersSheet.getRows();
+
+  const user = users.find((row) => row.get(아이디) === id);
+  const existingJoin = joins.find((row) => row.get(아이디) === id);
+
+  if (!user) {
+    await slack.direct(
+      [process.env.LUNDI_MANAGER_SLACK_ID!],
+      `인지되지 못한 사용자입니다. ${id}`,
+    );
+  }
+
+  const clubJoinModalView = new ClubJoinModalView(
+    user && new UserDTO(user.toObject()),
+    // existingJoin && new ClubJoinRecordDTO(existingJoin.toObject()),
+  );
+
+  return clubJoinModalView;
+};
+
 app.action(
   LUNCH_CLUB_JOIN_ACTION,
   async ({
@@ -57,9 +109,9 @@ app.action(
   }: SlackActionMiddlewareArgs<BlockAction<ButtonAction>>) => {
     await ack();
 
-    const join = new Join(body.user.id);
+    const clubJoinModalView = await beforeOpenEach(body.user.id);
 
-    await app.client.views.open(join.joinLunchClub(body, payload as any));
+    await app.client.views.open(clubJoinModalView.joinLunchClub(body, payload));
   },
 );
 
@@ -72,9 +124,11 @@ app.action(
   }: SlackActionMiddlewareArgs<BlockAction<ButtonAction>>) => {
     await ack();
 
-    const join = new Join(body.user.id);
+    const clubJoinModalView = await beforeOpenEach(body.user.id);
 
-    await app.client.views.open(join.joinDinnerClub(body, payload as any));
+    await app.client.views.open(
+      clubJoinModalView.joinDinnerClub(body, payload),
+    );
   },
 );
 
@@ -87,9 +141,11 @@ app.action(
   }: SlackActionMiddlewareArgs<BlockAction<ButtonAction>>) => {
     await ack();
 
-    const join = new Join(body.user.id);
+    const clubJoinModalView = await beforeOpenEach(body.user.id);
 
-    await app.client.views.open(join.joinLunchDinnerClub(body, payload as any));
+    await app.client.views.open(
+      clubJoinModalView.joinLunchDinnerClub(body, payload),
+    );
 
     // TODO: 신청내역에 대해 DM으로 보내주기
     // await slack.direct(
@@ -98,86 +154,72 @@ app.action(
     // );
 
     // TODO: 신청한 뒤에 수정할 수 있는 기능
-
-    // const join = new Join();
-    // await app.client.views.open(join.joinLunchDinnerClub(body, payload as any));
   },
 );
 
 app.view(
-  READY_FOR_JOIN_CLUB_CALLBACK_ID,
-  async ({
-    ack,
-    body,
-    payload,
-    view,
-  }: SlackViewMiddlewareArgs<SlackViewAction>) => {
+  { callback_id: READY_FOR_JOIN_CLUB_CALLBACK_ID, type: "view_submission" },
+  async ({ ack, body, payload }: SlackViewMiddlewareArgs<ViewSubmitAction>) => {
     await ack();
 
-    await slack.direct([body.user.id], JSON.stringify({ body, payload }));
+    const clubJoinFormDTO = new ClubJoinFormDTO(body.user.id);
 
-    await slack.direct([body.user.id], JSON.stringify({ view }));
+    const values = clubJoinFormDTO.parse(payload);
+    const member = new Member(body.user.id, values);
+
+    await doc.loadInfo();
+
+    const joinsSheet = doc.sheetsByTitle["Joins"];
+    const rows = await joinsSheet.getRows();
+
+    const existingJoin = rows.find((row) => row.get("id") === body.user.id);
+
+    if (existingJoin) {
+      existingJoin.assign(member.row);
+
+      await existingJoin.save();
+    } else {
+      await joinsSheet.addRow(member.row);
+    }
   },
 );
 
 app.view(
-  NOT_READY_FOR_JOIN_CLUB_CALLBACK_ID,
-  async ({ ack, body, payload }: SlackViewMiddlewareArgs<SlackViewAction>) => {
+  {
+    callback_id: READY_FOR_JOIN_CLUB_CALLBACK_ID,
+    type: "view_closed",
+  },
+  async ({ ack, body, payload }: SlackViewMiddlewareArgs<ViewClosedAction>) => {
     await ack();
+
+    await doc.loadInfo();
+
+    const cancellationsSheet = doc.sheetsByTitle["Cancellations"];
+
+    await cancellationsSheet.addRow({
+      [아이디]: body.user.id,
+      분류: READY_FOR_JOIN_CLUB_CALLBACK_ID,
+    });
+  },
+);
+
+app.view(
+  {
+    callback_id: NOT_READY_FOR_JOIN_CLUB_CALLBACK_ID,
+    type: "view_closed",
+  },
+  async ({ ack, body, payload }: SlackViewMiddlewareArgs<ViewClosedAction>) => {
+    await ack();
+
+    await doc.loadInfo();
+
+    const cancellationsSheet = doc.sheetsByTitle["Cancellations"];
+
+    await cancellationsSheet.addRow({
+      [아이디]: body.user.id,
+      분류: NOT_READY_FOR_JOIN_CLUB_CALLBACK_ID,
+    });
   },
 );
 
 module.exports.handler = handler;
-
-// lunch-dinner-club-join-action 1731988580.634948 uOAVo [object Object] button join
-// `${payload.action_id} ${payload.action_ts} ${payload.block_id} ${payload.text} ${payload.type} ${payload.value}`,
-
-// app.action(
-//   GATHER_LUNCH_CLUB,
-//   async ({
-//     ack,
-//     body,
-//     payload,
-//   }: SlackActionMiddlewareArgs<BlockAction<ButtonAction>>) => {
-//     await ack();
-
-//     const requestBody = JSON.stringify({
-//       payload: [body.user.id, payload.action_id, payload.value],
-//     });
-
-//     await requestGather(requestBody);
-
-//     await slack.direct(
-//       [body.user.id],
-//       "----- 런치클럽 참여신청이 완료되었습니다.",
-//     );
-//   },
-// );
-
-// app.action(
-//   GATHER_DINNER_CLUB,
-//   async ({
-//     ack,
-//     body,
-//     payload,
-//   }: SlackActionMiddlewareArgs<BlockAction<MultiStaticSelectAction>>) => {
-//     await ack();
-
-//     const requestBody = JSON.stringify({
-//       payload: [
-//         body.user.id,
-//         payload.action_id,
-//         payload.selected_options.map((option) => option.value).join(", "),
-//       ],
-//     });
-
-//     await requestGather(requestBody);
-
-//     await slack.direct(
-//       [body.user.id],
-//       `----- 디너클럽 참여신청이 완료되었습니다. ${payload.selected_options
-//         .map((option) => option.value)
-//         .join(", ")}`,
-//     );
-//   },
-// );
