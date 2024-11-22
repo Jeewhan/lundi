@@ -1,3 +1,4 @@
+import { DateTime } from "luxon";
 import {
   아이디,
   연락처,
@@ -10,6 +11,7 @@ import {
   디너클럽_일시,
   디너클럽_장소,
   클럽선택,
+  일시,
 } from "../shared/constants";
 
 export interface MemberValues {
@@ -75,6 +77,9 @@ export class Member {
 
   public get row() {
     return {
+      [일시]: DateTime.now()
+        .setZone("Asia/Seoul")
+        .toFormat("yyyy-MM-dd HH:mm:ss"),
       [아이디]: this[아이디],
       [연락처]: this[연락처],
       [만나지_않아도_될_멤버들]: this[만나지_않아도_될_멤버들].join(", "),

@@ -17,6 +17,7 @@ import {
 } from "@slack/bolt/dist/receivers/AwsLambdaReceiver";
 import { GoogleSpreadsheet } from "google-spreadsheet";
 import { JWT } from "google-auth-library";
+import { DateTime } from "luxon";
 
 import Slack from "./services/messenger";
 import { ClubJoinFormDTO } from "./dtos/club-join-form-dto";
@@ -31,6 +32,7 @@ import {
   NOT_READY_FOR_JOIN_CLUB_CALLBACK_ID,
   READY_FOR_JOIN_CLUB_CALLBACK_ID,
   아이디,
+  일시,
 } from "./shared/constants";
 
 import serviceAccountCredentials from "../sheet-381101-882712223151.json";
@@ -197,6 +199,9 @@ app.view(
     const cancellationsSheet = doc.sheetsByTitle["Cancellations"];
 
     await cancellationsSheet.addRow({
+      [일시]: DateTime.now()
+        .setZone("Asia/Seoul")
+        .toFormat("yyyy-MM-dd HH:mm:ss"),
       [아이디]: body.user.id,
       분류: READY_FOR_JOIN_CLUB_CALLBACK_ID,
     });
@@ -216,6 +221,9 @@ app.view(
     const cancellationsSheet = doc.sheetsByTitle["Cancellations"];
 
     await cancellationsSheet.addRow({
+      [일시]: DateTime.now()
+        .setZone("Asia/Seoul")
+        .toFormat("yyyy-MM-dd HH:mm:ss"),
       [아이디]: body.user.id,
       분류: NOT_READY_FOR_JOIN_CLUB_CALLBACK_ID,
     });

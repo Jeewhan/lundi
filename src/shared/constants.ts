@@ -8,6 +8,7 @@ export const LUNCH_DINNER_CLUB_JOIN_ACTION = "lunch-dinner-club-join-action";
 export const READY_FOR_JOIN_CLUB_CALLBACK_ID = "ready-for-join-club";
 export const NOT_READY_FOR_JOIN_CLUB_CALLBACK_ID = "not-ready-for-join-club";
 
+export const 일시 = "일시";
 export const 아이디 = "아이디";
 export const 연락처 = "연락처";
 export const 만나지_않아도_될_멤버들 = "만나지_않아도_될_멤버들";
