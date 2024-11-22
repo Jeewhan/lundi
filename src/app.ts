@@ -76,11 +76,11 @@ const doc = new GoogleSpreadsheet(
 const beforeOpenEach = async (id: string) => {
   await doc.loadInfo();
 
-  const joinsSheet = doc.sheetsByTitle["Joins"];
-  const joins = await joinsSheet.getRows();
-
   const usersSheet = doc.sheetsByTitle["Users"];
   const users = await usersSheet.getRows();
+
+  const joinsSheet = doc.sheetsByTitle["Joins"];
+  const joins = await joinsSheet.getRows();
 
   const user = users.find((row) => row.get(아이디) === id);
   const existingJoin = joins.find((row) => row.get(아이디) === id);

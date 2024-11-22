@@ -9,6 +9,7 @@ import Slack from "./services/messenger";
 import { Invitations } from "./entities/invitations";
 
 import serviceAccountCredentials from "../sheet-381101-882712223151.json";
+import { 성함, 아이디 } from "./shared/constants";
 
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
@@ -29,8 +30,12 @@ const doc = new GoogleSpreadsheet(
   serviceAccountAuth,
 );
 
-const invitations = new Invitations(slack, doc);
-invitations.sendLunchDinnerClubAnnouncement();
+// const invitations = new Invitations(slack, doc);
+// invitations.sendLunchDinnerClubAnnouncement();
+
+// slack
+//   .conversationsMembers(process.env.MEMOIR_17_INTRODUCE_CHANNEL!)
+//   .then((res) => console.dir(res.members, { maxArrayLength: null }));
 
 // const introduce = new Introduces(slack, doc);
 // introduce.getIntroduceChannelMessages(
@@ -63,3 +68,39 @@ invitations.sendLunchDinnerClubAnnouncement();
 // }
 
 // console.dir(obj, { maxArrayLength: null });
+
+// (async () => {
+//   const list = [
+//     "U07T0P8G6Q7",
+//     "U07T1NWKFRD",
+//     "U07T9F9G6AD",
+//     "U07TDDP4X9T",
+//     "U07TV061SAD",
+//     "U07U06XV8C9",
+//     "U07UCAWP3UG",
+//     "U07UK9HGDQV",
+//     "U07UN2K81PV",
+//     "U07UZHSJ8N9",
+//     "U07V3K1N1MF",
+//     "U0800EZ8DS6",
+//     "U0805ETBUSC",
+//     "U0810D1EBRV",
+//   ];
+
+//   await doc.loadInfo();
+
+//   const usersSheet = doc.sheetsByTitle["Users"];
+
+//   const users = await Promise.all(list.map((id) => slack.usersInfo(id)));
+
+//   console.log(users);
+
+//   const usersData = users
+//     .filter(({ user }) => !user!.is_bot)
+//     .map(({ user }) => ({
+//       [아이디]: user!.id as string,
+//       [성함]: user!.real_name as string,
+//     }));
+
+//   usersSheet.addRows(usersData);
+// })();

@@ -23,7 +23,8 @@ export interface Messenger {
   ): Promise<ConversationsRepliesResponse>;
   conversationsMembers(
     channel: string,
-    cursor?: string,
+    options?: { cursor?: string },
+    accumulatedMembers?: string[],
   ): Promise<ConversationsMembersResponse>;
   usersInfo(user: string): Promise<UsersInfoResponse>;
 }
@@ -141,32 +142,43 @@ class Slack implements Messenger {
     });
   }
 
-  public async conversationsMembers(channel: string, cursor?: string) {
-    return await this.slack.client.conversations.members({
+  public async conversationsMembers(
+    channel: string,
+    options?: { cursor?: string },
+    accumulatedMembers: string[] = [],
+  ): Promise<ConversationsMembersResponse> {
+    const response = await this.slack.client.conversations.members({
       channel,
-      cursor,
+      limit: 200,
+      cursor: options?.cursor,
     });
+
+    if (!response.members) {
+      throw new Error("Members is undefined");
+    }
+
+    const updatedMembers = [...accumulatedMembers, ...response.members];
+
+    if (response.response_metadata?.next_cursor) {
+      return this.conversationsMembers(
+        channel,
+        {
+          cursor: response.response_metadata.next_cursor,
+        },
+        updatedMembers,
+      );
+    }
+
+    return {
+      ...response,
+      members: updatedMembers,
+    };
   }
 
   public async usersInfo(user: string) {
     return await this.slack.client.users.info({
       user,
     });
-  }
-
-  public async conversationsMembersList(channel: string) {
-    const response = await this.slack.client.conversations.members({
-      channel,
-    });
-
-    if (response.response_metadata?.next_cursor) {
-      return await this.slack.client.conversations.members({
-        channel,
-        cursor: response.response_metadata?.next_cursor,
-      });
-    } else {
-      return response;
-    }
   }
 }
 
