@@ -92,10 +92,12 @@ const beforeOpenEach = async (id: string) => {
       [process.env.LUNDI_MANAGER_SLACK_ID!],
       `인지되지 못한 사용자입니다. ${id}`,
     );
+
+    throw new Error("User not found");
   }
 
   const clubJoinModalView = new ClubJoinModalView(
-    user && new UserDTO(user.toObject()),
+    new UserDTO(user.toObject()),
     // existingJoin && new ClubJoinRecordDTO(existingJoin.toObject()),
   );
 
