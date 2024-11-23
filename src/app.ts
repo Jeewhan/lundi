@@ -28,13 +28,19 @@ import { ClubJoinModalView } from "./views/club-join-modal-view";
 import {
   DINNER_CLUB_JOIN_ACTION,
   LUNCH_CLUB_JOIN_ACTION,
+  LUNCH_DINNER_CLUB_CANCEL_ACTION,
   LUNCH_DINNER_CLUB_JOIN_ACTION,
+  NOT_EXIST_JOIN,
   NOT_READY_FOR_JOIN_CLUB_CALLBACK_ID,
   READY_FOR_JOIN_CLUB_CALLBACK_ID,
+  런치클럽_관심사,
   링크,
+  분류,
   아이디,
+  연락처,
   일시,
   자기소개,
+  클럽선택,
   텍스트,
 } from "./shared/constants";
 
@@ -83,12 +89,11 @@ const beforeOpenEach = async (id: string) => {
 
   const usersSheet = doc.sheetsByTitle["Users"];
   const users = await usersSheet.getRows();
+  const user = users.find((row) => row.get(아이디) === id);
 
   const joinsSheet = doc.sheetsByTitle["Joins"];
   const joins = await joinsSheet.getRows();
-
-  const user = users.find((row) => row.get(아이디) === id);
-  const existingJoin = joins.find((row) => row.get(아이디) === id);
+  const join = joins.find((row) => row.get(아이디) === id);
 
   if (!user) {
     await slack.direct([process.env.LUNDI_MANAGER_SLACK_ID!], {
@@ -101,12 +106,8 @@ const beforeOpenEach = async (id: string) => {
   if (!user.get(자기소개)) {
     const introduceChannel = process.env.MEMOIR_17_INTRODUCE_CHANNEL!;
 
-    await slack.direct([process.env.LUNDI_MANAGER_SLACK_ID!], {
-      text: JSON.stringify(introduceChannel),
-    });
-
     const { messages } = await slack.conversationHistories(introduceChannel, {
-      limit: 500,
+      limit: 400,
     });
 
     if (messages) {
@@ -133,7 +134,6 @@ const beforeOpenEach = async (id: string) => {
         if (user) {
           const clubJoinModalView = new ClubJoinModalView(
             new UserDTO(user.toObject()),
-            // existingJoin && new ClubJoinRecordDTO(existingJoin.toObject()),
           );
 
           return clubJoinModalView;
@@ -144,7 +144,7 @@ const beforeOpenEach = async (id: string) => {
 
   const clubJoinModalView = new ClubJoinModalView(
     new UserDTO(user.toObject()),
-    // existingJoin && new ClubJoinRecordDTO(existingJoin.toObject()),
+    join && new ClubJoinRecordDTO(join.toObject()),
   );
 
   return clubJoinModalView;
@@ -196,38 +196,94 @@ app.action(
     await app.client.views.open(
       clubJoinModalView.joinLunchDinnerClub(body, payload),
     );
+  },
+);
 
-    // TODO: 신청내역에 대해 DM으로 보내주기
-    // await slack.direct(
-    //   [body.user.id],
-    //   `${body.user.username}님 런치디너클럽 참가 신청이 완료되었습니다.`,
-    // );
+app.action(
+  LUNCH_DINNER_CLUB_CANCEL_ACTION,
+  async ({
+    ack,
+    body,
+    payload,
+  }: SlackActionMiddlewareArgs<BlockAction<ButtonAction>>) => {
+    await ack();
 
-    // TODO: 신청한 뒤에 수정할 수 있는 기능
+    await doc.loadInfo();
+
+    const usersSheet = doc.sheetsByTitle["Users"];
+    const users = await usersSheet.getRows();
+    const user = users.find((row) => row.get(아이디) === body.user.id);
+
+    if (!user) {
+      await slack.direct([process.env.LUNDI_MANAGER_SLACK_ID!], {
+        text: `인지되지 못한 사용자입니다. ${body.user.id}`,
+      });
+
+      throw new Error("User not found");
+    }
+
+    const joinsSheet = doc.sheetsByTitle["Joins"];
+    const joins = await joinsSheet.getRows();
+    const join = joins.find((row) => row.get(아이디) === body.user.id);
+
+    const cancellationsSheet = doc.sheetsByTitle["Cancellations"];
+
+    if (!join) {
+      await cancellationsSheet.addRow({
+        [일시]: DateTime.now()
+          .setZone("Asia/Seoul")
+          .toFormat("yyyy-MM-dd HH:mm:ss"),
+        [아이디]: body.user.id,
+        [분류]: NOT_EXIST_JOIN,
+      });
+
+      await slack.direct([body.user.id], {
+        text: "신청내역이 존재하지 않습니다. 먼저 신청해주시길 부탁드립니다.",
+      });
+    } else {
+      await cancellationsSheet.addRow({
+        [일시]: DateTime.now()
+          .setZone("Asia/Seoul")
+          .toFormat("yyyy-MM-dd HH:mm:ss"),
+        [아이디]: body.user.id,
+        [분류]: LUNCH_DINNER_CLUB_CANCEL_ACTION,
+      });
+
+      await join.delete();
+
+      await slack.direct([body.user.id], {
+        text: "참가신청이 취소되었습니다. 다음 기회에라도 뵙고 싶습니다.",
+      });
+    }
   },
 );
 
 app.view(
   { callback_id: READY_FOR_JOIN_CLUB_CALLBACK_ID, type: "view_submission" },
   async ({ ack, body, payload }: SlackViewMiddlewareArgs<ViewSubmitAction>) => {
-    await ack();
+    try {
+      await ack();
 
-    const clubJoinFormDTO = new ClubJoinFormDTO(body.user.id);
+      const clubJoinFormDTO = new ClubJoinFormDTO(body.user.id);
+      const values = clubJoinFormDTO.parse(payload);
 
-    const values = clubJoinFormDTO.parse(payload);
-    const member = new Member(body.user.id, values);
+      const member = new Member(body.user.id, values);
 
-    await doc.loadInfo();
+      await doc.loadInfo();
 
-    const joinsSheet = doc.sheetsByTitle["Joins"];
-    const rows = await joinsSheet.getRows();
+      const joinsSheet = doc.sheetsByTitle["Joins"];
+      const rows = await joinsSheet.getRows();
 
-    const existingJoin = rows.find((row) => row.get(아이디) === body.user.id);
+      const existingJoin = rows.find((row) => row.get(아이디) === body.user.id);
+      const purpose = existingJoin ? "수정" : "신청";
 
-    if (existingJoin) {
-      existingJoin.assign(member.row);
+      if (existingJoin) {
+        existingJoin.assign(member.row);
 
-      await existingJoin.save();
+        await existingJoin.save();
+      } else {
+        await joinsSheet.addRow(member.row);
+      }
 
       await slack.direct([body.user.id], {
         blocks: [
@@ -235,26 +291,16 @@ app.view(
             type: "section",
             text: {
               type: "mrkdwn",
-              text: `수정이 완료되었습니다.`,
+              text: `${purpose}이 완료되었습니다.`,
             },
           },
+
           ...member.blocks,
         ],
       });
-    } else {
-      await joinsSheet.addRow(member.row);
-
-      await slack.direct([body.user.id], {
-        blocks: [
-          {
-            type: "section",
-            text: {
-              type: "mrkdwn",
-              text: `신청이 완료되었습니다.`,
-            },
-          },
-          ...member.blocks,
-        ],
+    } catch (error) {
+      await slack.direct([process.env.LUNDI_MANAGER_SLACK_ID!], {
+        text: `오류가 발생했습니다. ${JSON.stringify(error)}`,
       });
     }
   },

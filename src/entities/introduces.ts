@@ -52,21 +52,25 @@ export class Introduces {
       match(message)
         .with({ ts: P.string, user: P.string, text: P.string }, F.identity)
         .otherwise(() => null),
-    ).map((message) => ({
+    );
+
+    const messagesWithLinks = validatedMessages.map((message) => ({
       ...message,
-      link: `https://slack.com/archives/${channel}/p${message.ts?.replace(
+      link: `https://slack.com/archives/${channel}/p${message.ts.replace(
         ".",
         "",
       )}`,
     }));
 
-    await introduceSheet.addRows(
-      validatedMessages.map((message) => ({
-        timestamp: message.ts,
-        id: message.user,
-        link: message.link,
-        text: message.text,
-      })),
-    );
+    if (messagesWithLinks.length) {
+      await introduceSheet.addRows(
+        messagesWithLinks.map((message) => ({
+          timestamp: message.ts,
+          id: message.user,
+          link: message.link,
+          text: message.text,
+        })),
+      );
+    }
   }
 }

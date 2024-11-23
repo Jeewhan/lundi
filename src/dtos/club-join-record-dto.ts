@@ -26,14 +26,21 @@ export class ClubJoinRecordDTO {
   constructor(private readonly existingJoin: Record<string, any>) {
     this[아이디] = existingJoin[아이디];
     this[연락처] = existingJoin[연락처];
-    this[만나지_않아도_될_멤버들] =
-      existingJoin[만나지_않아도_될_멤버들].split(", ");
-    this[보증금_동의] = existingJoin[보증금_동의];
-    this[매칭_불확실성_동의] = existingJoin[매칭_불확실성_동의];
-    this[제한된_지원_동의] = existingJoin[제한된_지원_동의];
-    this[개인정보_동의] = existingJoin[개인정보_동의];
-    this[런치클럽_관심사] = existingJoin[런치클럽_관심사].split(", ");
-    this[디너클럽_일시] = existingJoin[디너클럽_일시].split(", ");
-    this[디너클럽_장소] = existingJoin[디너클럽_장소].split(", ");
+    this[만나지_않아도_될_멤버들] = existingJoin[만나지_않아도_될_멤버들]
+      ? existingJoin[만나지_않아도_될_멤버들].split(", ")
+      : [];
+    this[보증금_동의] = existingJoin[보증금_동의] ?? true;
+    this[매칭_불확실성_동의] = existingJoin[매칭_불확실성_동의] ?? true;
+    this[제한된_지원_동의] = existingJoin[제한된_지원_동의] ?? true;
+    this[개인정보_동의] = existingJoin[개인정보_동의] ?? true;
+    this[런치클럽_관심사] = existingJoin[런치클럽_관심사]
+      ? existingJoin[런치클럽_관심사].split(", ")
+      : [];
+    this[디너클럽_일시] = existingJoin[디너클럽_일시]
+      ? existingJoin[디너클럽_일시].split(", ")
+      : [];
+    this[디너클럽_장소] = existingJoin[디너클럽_장소]
+      ? existingJoin[디너클럽_장소].split(", ")
+      : [];
   }
 }

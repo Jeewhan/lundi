@@ -8,6 +8,8 @@ provider:
   runtime: nodejs20.x
   deploymentMethod: direct
   region: ap-northeast-2
+  memorySize: 10240
+  timeout: 30
 functions:
   slack:
     # Lambda 함수의 진입점

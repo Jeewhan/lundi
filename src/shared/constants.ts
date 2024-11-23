@@ -4,7 +4,9 @@ export const GATHER_DINNER_CLUB = "gather-dinner-club";
 export const LUNCH_CLUB_JOIN_ACTION = "lunch-club-join-action";
 export const DINNER_CLUB_JOIN_ACTION = "dinner-club-join-action";
 export const LUNCH_DINNER_CLUB_JOIN_ACTION = "lunch-dinner-club-join-action";
-
+export const LUNCH_DINNER_CLUB_CANCEL_ACTION =
+  "lunch-dinner-club-cancel-action";
+export const NOT_EXIST_JOIN = "not-exist-join";
 export const READY_FOR_JOIN_CLUB_CALLBACK_ID = "ready-for-join-club";
 export const NOT_READY_FOR_JOIN_CLUB_CALLBACK_ID = "not-ready-for-join-club";
 
@@ -20,6 +22,7 @@ export const 클럽선택 = "클럽선택";
 export const 런치클럽_관심사 = "런치클럽_관심사";
 export const 디너클럽_일시 = "디너클럽_일시";
 export const 디너클럽_장소 = "디너클럽_장소";
+export const 분류 = "분류";
 
 export const 성함 = "성함";
 export const 자기소개 = "자기소개";

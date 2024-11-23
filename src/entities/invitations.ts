@@ -5,8 +5,10 @@ import { Messenger } from "../services/messenger";
 import {
   DINNER_CLUB_JOIN_ACTION,
   LUNCH_CLUB_JOIN_ACTION,
+  LUNCH_DINNER_CLUB_CANCEL_ACTION,
   LUNCH_DINNER_CLUB_JOIN_ACTION,
 } from "../shared/constants";
+import { KnownBlock } from "@slack/bolt";
 
 export class Invitations {
   constructor(
@@ -15,10 +17,18 @@ export class Invitations {
   ) {}
 
   public async sendLunchDinnerClubAnnouncement() {
-    await this.messenger.post(
-      process.env.LUNDI_TEST_CHANNEL as string,
+    const response = await this.messenger.post(
+      process.env.LUNDI_TEST_CHANNEL as string, // TODO: 배포 전 채널 변경
       "런치클럽 & 디너클럽 모집해요 🎉",
-      LUNCH_DINNER_CLUB_INVITE_BUTTON_LAYOUT,
+      {
+        blocks: LUNCH_DINNER_CLUB_INVITE_BUTTON_LAYOUT,
+      },
+    );
+
+    await this.messenger.post(
+      response.channel!,
+      "신청과 관련하여 해결하기 어려운 이슈가 발생할 경우, 이곳에 메시지를 남겨주세요.",
+      { thread_ts: response.ts },
     );
   }
 }
@@ -64,7 +74,7 @@ const LUNCH_DINNER_CLUB_INVITE_BUTTON_LAYOUT = [
     type: "section",
     text: {
       type: "mrkdwn",
-      text: "• *신청기한*: 다음 주 화요일(11/26)까지\n• *최종매칭*: 다음 주 금요일(11/29) 중\n• *매칭방식*: 슬랙 그룹메시지 개설\n• *참여방법*: 아래 '참가신청'을 눌러 매칭에 필요한 내용을 작성해 주세요.\n• *수정방법*: 만약 수정을 원하실 경우, 재신청 해주세요. 가장 최근 제출된 신청 내역으로 매칭해 드려요.\n• <https://ssgi.notion.site/FAQ-14663dfa4a5080a19037caa8a85232da|런치/디너 클럽 FAQ>",
+      text: "• *신청기한*: 다음 주 화요일(11/26)까지\n• *매칭시점*: 다음 주 금요일(11/29) 중\n• *매칭방식*: 슬랙 그룹메시지 개설\n• *참여방법*: 아래 '참가신청'을 눌러 매칭에 필요한 내용을 작성해 주세요.\n• *수정방법*: 재신청해주세요. 두 클럽 모두 신청하시려면 동시참가신청을 해주세요.\n• <https://ssgi.notion.site/FAQ-14663dfa4a5080a19037caa8a85232da|런치/디너 클럽 FAQ>",
     },
   },
   {
@@ -78,7 +88,7 @@ const LUNCH_DINNER_CLUB_INVITE_BUTTON_LAYOUT = [
     type: "section",
     text: {
       type: "mrkdwn",
-      text: "*신청버튼을 누르고 10초가 지나도 창이 열리지 않을 경우, 버튼을 다시 눌러주세요.*",
+      text: "*신청버튼을 누르고 로딩이 끝나고도 창이 열리지 않을 경우, 버튼을 다시 눌러주세요.*\n*경우에 따라 요청(신청, 제출, 취소)이 몇 차례 실패할 수 있습니다.*\n*요청이 완료되면 DM을 통해 관련안내가 발송됩니다.*",
     },
   },
   {
@@ -114,6 +124,16 @@ const LUNCH_DINNER_CLUB_INVITE_BUTTON_LAYOUT = [
         action_id: LUNCH_DINNER_CLUB_JOIN_ACTION,
         style: "primary",
       },
+      {
+        type: "button",
+        text: {
+          type: "plain_text",
+          text: "참가신청 취소",
+        },
+        value: "cancel",
+        action_id: LUNCH_DINNER_CLUB_CANCEL_ACTION,
+        style: "danger",
+      },
     ],
   },
-];
+] as KnownBlock[];

@@ -1,18 +1,23 @@
-import { App, Block, KnownBlock } from "@slack/bolt";
+import { App, Block, KnownBlock, SectionBlock } from "@slack/bolt";
+import type { ChatPostMessageResponse } from "@slack/web-api/dist/response/ChatPostMessageResponse";
 import type { ConversationsHistoryResponse } from "@slack/web-api/dist/response/ConversationsHistoryResponse";
 import type { ConversationsRepliesResponse } from "@slack/web-api/dist/response/ConversationsRepliesResponse";
 import type { ConversationsMembersResponse } from "@slack/web-api/dist/response/ConversationsMembersResponse";
 import type { UsersInfoResponse } from "@slack/web-api/dist/response/UsersInfoResponse";
 
 export interface Messenger {
-  post(channel: string, text: string, blocks?: Block[]): Promise<void>;
+  post(
+    channel: string,
+    text: string,
+    options: { blocks?: KnownBlock[]; thread_ts?: string },
+  ): Promise<ChatPostMessageResponse>;
   direct(
     users: string[],
     content: { text: string } | { blocks: KnownBlock[] },
   ): Promise<string>;
   createChannel(name: string): Promise<string>;
   invite(channel: string, users: string[]): Promise<void>;
-  createBlocks(text: string, actionOptions: Block[]): Block[];
+  createBlocks(text: string, actionOptions: KnownBlock[]): KnownBlock[];
   conversationHistories(
     channel: string,
     options?: {
@@ -35,11 +40,16 @@ export interface Messenger {
 class Slack implements Messenger {
   constructor(private readonly slack: App) {}
 
-  public async post(channel: string, text: string, blocks?: Block[]) {
-    await this.slack.client.chat.postMessage({
+  public async post(
+    channel: string,
+    text: string,
+    options: { blocks?: KnownBlock[]; thread_ts?: string },
+  ) {
+    return await this.slack.client.chat.postMessage({
       channel,
       text,
-      ...(blocks && { blocks }),
+      ...(options.blocks && { blocks: options.blocks }),
+      ...(options.thread_ts && { thread_ts: options.thread_ts }),
     });
   }
 
@@ -88,7 +98,7 @@ class Slack implements Messenger {
     }
   }
 
-  public createBlocks(text: string, actionOptions: Block[]): Block[] {
+  public createBlocks(text: string, actionOptions: KnownBlock[]): KnownBlock[] {
     return [
       {
         type: "section",
@@ -96,7 +106,7 @@ class Slack implements Messenger {
           type: "mrkdwn",
           text,
         },
-      } as Block,
+      } as SectionBlock,
       {
         type: "divider",
       },

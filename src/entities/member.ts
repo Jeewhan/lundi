@@ -1,4 +1,6 @@
 import { DateTime } from "luxon";
+import { KnownBlock, SectionBlock } from "@slack/bolt";
+
 import {
   아이디,
   연락처,
@@ -13,7 +15,6 @@ import {
   클럽선택,
   일시,
 } from "../shared/constants";
-import { KnownBlock } from "@slack/bolt";
 
 export interface MemberValues {
   [연락처]: string;
@@ -58,10 +59,10 @@ export class Member {
   ) {
     this[연락처] = values[연락처];
     this[만나지_않아도_될_멤버들] = values[만나지_않아도_될_멤버들];
-    this[보증금_동의] = values[보증금_동의];
-    this[매칭_불확실성_동의] = values[매칭_불확실성_동의];
-    this[제한된_지원_동의] = values[제한된_지원_동의];
-    this[개인정보_동의] = values[개인정보_동의];
+    this[보증금_동의] = values[보증금_동의] ?? true;
+    this[매칭_불확실성_동의] = values[매칭_불확실성_동의] ?? true;
+    this[제한된_지원_동의] = values[제한된_지원_동의] ?? true;
+    this[개인정보_동의] = values[개인정보_동의] ?? true;
 
     const isLunch = "런치클럽_관심사" in values;
     const isDinner = "디너클럽_일시" in values && "디너클럽_장소" in values;
@@ -96,18 +97,44 @@ export class Member {
   }
 
   public get blocks(): KnownBlock[] {
-    const properties = Object.entries(this.row)
-      .filter(([key]) =>
-        [연락처, 런치클럽_관심사, 디너클럽_일시, 디너클럽_장소].includes(key),
-      )
-      .filter(([key, value]) => value);
+    const noticeBlock =
+      this[클럽선택] === "런치디너"
+        ? []
+        : [
+            {
+              type: "section",
+              text: {
+                type: "mrkdwn",
+                text: "> 클럽선택이 *런치디너* 가 아니라 *런치* 또는 *디너* 라고 나와있다면, 해당 클럽만 신청된 것입니다.\n> 둘 다 신청되기를 바라신다면 *동시참가신청* 을 해주세요.",
+              },
+            } as KnownBlock,
+          ];
 
-    return properties.map(([key, value]) => ({
-      type: "section" as const,
-      text: {
-        type: "mrkdwn" as const,
-        text: `${key}: ${value}`,
-      },
-    }));
+    const relevantFields = [
+      연락처,
+      클럽선택,
+      런치클럽_관심사,
+      디너클럽_일시,
+      디너클럽_장소,
+    ] as const;
+
+    const propertyBlocks = relevantFields
+      .filter((field) =>
+        Array.isArray(this.row[field])
+          ? this.row[field].length
+          : this.row[field],
+      )
+      .map(
+        (field) =>
+          ({
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: `${field}: *${this.row[field]}*`,
+            },
+          } as SectionBlock),
+      );
+
+    return [...noticeBlock, ...propertyBlocks];
   }
 }

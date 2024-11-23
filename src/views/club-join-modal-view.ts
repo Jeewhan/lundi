@@ -13,6 +13,7 @@ import { ClubJoinRecordDTO } from "../dtos/club-join-record-dto";
 import {
   NOT_READY_FOR_JOIN_CLUB_CALLBACK_ID,
   READY_FOR_JOIN_CLUB_CALLBACK_ID,
+  regions,
   개인정보_동의,
   디너클럽_일시,
   디너클럽_장소,
@@ -27,7 +28,8 @@ import {
 
 export class ClubJoinModalView {
   constructor(
-    private readonly user: UserDTO, // private readonly existingJoin?: ClubJoinRecordDTO,
+    private readonly user: UserDTO,
+    private readonly existingJoin?: ClubJoinRecordDTO,
   ) {}
 
   public joinLunchClub(
@@ -91,13 +93,6 @@ export class ClubJoinModalView {
     ]);
   }
 
-  private get excludedMembers(): string[] {
-    return (
-      // this.existingJoin?.[만나지_않아도_될_멤버들] ??
-      this.user[만나지_않아도_될_멤버들] ?? []
-    );
-  }
-
   private get spacerBlock(): KnownBlock[] {
     return [
       {
@@ -118,49 +113,92 @@ export class ClubJoinModalView {
     ];
   }
 
-  // private get dinnerDatetimes(): MrkdwnOption[] {
-  //   const list = [
-  //     {
-  //       value: "20241206 19:00",
-  //       text: {
-  //         type: "mrkdwn",
-  //         text: "12/6(금) 저녁 7시",
-  //       },
-  //     },
-  //     {
-  //       value: "20241208 18:00",
-  //       text: {
-  //         type: "mrkdwn",
-  //         text: "12/8(일) 저녁 6시",
-  //       },
-  //     },
-  //     {
-  //       value: "20241213 19:00",
-  //       text: {
-  //         type: "mrkdwn",
-  //         text: "12/13(금) 저녁 7시",
-  //       },
-  //     },
-  //     {
-  //       value: "20241214 18:00",
-  //       text: {
-  //         type: "mrkdwn",
-  //         text: "12/14(토) 저녁 6시",
-  //       },
-  //     },
-  //     {
-  //       value: "20241215 18:00",
-  //       text: {
-  //         type: "mrkdwn",
-  //         text: "12/15(일) 저녁 6시",
-  //       },
-  //     },
-  //   ] as MrkdwnOption[];
+  private get excludedMembers(): undefined | string[] {
+    if (this.existingJoin?.[만나지_않아도_될_멤버들].length) {
+      return this.existingJoin[만나지_않아도_될_멤버들];
+    } else if (this.user[만나지_않아도_될_멤버들].length) {
+      return this.user[만나지_않아도_될_멤버들];
+    } else {
+      return undefined;
+    }
+  }
 
-  //   return list.filter((item) =>
-  //     (this.existingJoin?.[디너클럽_일시] ?? []).includes(item.value!),
-  //   );
-  // }
+  private get lunchClubTopics(): undefined | MrkdwnOption[] {
+    if (!this.existingJoin || !this.existingJoin[런치클럽_관심사].length) {
+      return undefined;
+    } else {
+      return this.existingJoin[런치클럽_관심사].map((topic) => ({
+        value: topic,
+        text: { type: "mrkdwn", text: topic },
+      }));
+    }
+  }
+
+  private get dinnerDatetimes(): undefined | MrkdwnOption[] {
+    if (!this.existingJoin || !this.existingJoin[디너클럽_일시].length) {
+      return undefined;
+    } else {
+      const list = [
+        {
+          value: "20241206 19:00",
+          text: {
+            type: "mrkdwn",
+            text: "12/6(금) 저녁 7시",
+          },
+        },
+        {
+          value: "20241208 18:00",
+          text: {
+            type: "mrkdwn",
+            text: "12/8(일) 저녁 6시",
+          },
+        },
+        {
+          value: "20241213 19:00",
+          text: {
+            type: "mrkdwn",
+            text: "12/13(금) 저녁 7시",
+          },
+        },
+        {
+          value: "20241214 18:00",
+          text: {
+            type: "mrkdwn",
+            text: "12/14(토) 저녁 6시",
+          },
+        },
+        {
+          value: "20241215 18:00",
+          text: {
+            type: "mrkdwn",
+            text: "12/15(일) 저녁 6시",
+          },
+        },
+      ] as MrkdwnOption[];
+
+      return list.filter((item) =>
+        this.existingJoin![디너클럽_일시].includes(item.value!),
+      );
+    }
+  }
+
+  private get dinnerLocations(): undefined | MrkdwnOption[] {
+    if (!this.existingJoin || !this.existingJoin[디너클럽_장소].length) {
+      return undefined;
+    } else {
+      const list = regions.map((region) => ({
+        value: region,
+        text: {
+          type: "mrkdwn" as const,
+          text: region,
+        },
+      }));
+
+      return list.filter((item) =>
+        this.existingJoin![디너클럽_장소].includes(item.value!),
+      );
+    }
+  }
 
   private joinClub(
     body: BlockAction<ButtonAction>,
@@ -211,8 +249,7 @@ export class ClubJoinModalView {
 
           ...this.spacerBlock,
 
-          // ...(this.existingJoin
-          ...(false ? [] : this.getPolicyAgreementBlocks()),
+          ...(this.existingJoin ? [] : this.getPolicyAgreementBlocks()),
         ],
       },
     };
@@ -237,6 +274,11 @@ export class ClubJoinModalView {
           text: title,
         },
 
+        close: {
+          type: "plain_text",
+          text: "닫기",
+        },
+
         blocks: [
           ...this.getNameVerificationBlocks(),
 
@@ -245,15 +287,10 @@ export class ClubJoinModalView {
 
             text: {
               type: "mrkdwn",
-              text: `*자기소개가 제출되어있지 않습니다.*\n*자기소개 채널에 제출하신 뒤, 클럽신청메시지 스레드에 제출했음을 알려주세요.*`,
+              text: `*자기소개가 제출되어있지 않습니다.*\n*자기소개 채널에 제출하신 뒤, 다시 신청해주세요.*`,
             },
           },
         ],
-      },
-
-      close: {
-        type: "plain_text",
-        text: "닫기",
       },
     };
   }
@@ -297,7 +334,7 @@ export class ClubJoinModalView {
 
         action_id: 연락처,
 
-        // initial_value: this.existingJoin?.[연락처] ?? "",
+        initial_value: this.existingJoin?.[연락처] ?? "",
 
         placeholder: {
           type: "plain_text",
@@ -314,7 +351,7 @@ export class ClubJoinModalView {
 
         text: {
           type: "mrkdwn",
-          text: ":one: 만나지 않아도 되는 멤버가 있다면, 매칭에서 제외할 수 있습니다.\n- 같은 회고모임 멤버들은 기본적으로 포함되어있습니다.",
+          text: "만나지 않아도 되는 멤버가 있다면, 매칭에서 제외할 수 있습니다.\n- 같은 회고모임 멤버들은 기본적으로 포함되어있습니다.",
         },
       },
 
@@ -355,7 +392,7 @@ export class ClubJoinModalView {
 
         text: {
           type: "mrkdwn",
-          text: ":two: 노쇼 방지를 위한 보증금 제도가 있습니다. 그룹 내에서 일정 확정 후 불참하실 경우, 메모어 보증금에서 1만원이 차감됩니다. (예: 1회 불참 시 1만원, 3회 불참 시 3만원 차감)",
+          text: ":one: 노쇼 방지를 위한 보증금 제도가 있습니다. 그룹 내에서 일정 확정 후 불참하실 경우, 메모어 보증금에서 1만원이 차감됩니다. (예: 1회 불참 시 1만원, 3회 불참 시 3만원 차감)",
         },
       },
 
@@ -395,7 +432,7 @@ export class ClubJoinModalView {
 
         text: {
           type: "mrkdwn",
-          text: ":three: 매칭 과정에서 매칭 인원의 부족, 선호 및 관심 요소에 대한 부족으로 해당 회차에 한해 매칭이 안될 수도 있습니다.\n자주 발생하는 일은 아니며, 매칭이 될 수 있도록 최선을 다하겠습니다.",
+          text: ":two: 매칭 과정에서 매칭 인원의 부족, 선호 및 관심 요소에 대한 부족으로 해당 회차에 한해 매칭이 안될 수도 있습니다.\n자주 발생하는 일은 아니며, 매칭이 될 수 있도록 최선을 다하겠습니다.",
         },
       },
 
@@ -435,7 +472,7 @@ export class ClubJoinModalView {
 
         text: {
           type: "mrkdwn",
-          text: ":four: 메모어 런치/디너는 CS 응대가 어렵습니다.",
+          text: ":three: 메모어 런치/디너는 CS 응대가 어렵습니다.",
         },
       },
 
@@ -475,7 +512,7 @@ export class ClubJoinModalView {
 
         text: {
           type: "mrkdwn",
-          text: ":five: 개인정보 수집·이용 및 제3자 제공 동의서\n본인은 다음과 같이 메모어 17기 신청 정보 중 일부를 본 동의서에서 정하는 경우에 한하여 메모어 런치/디너 클럽장에게 제공하는 것을 동의합니다.\n1. 개인정보 제3자 제공 동의\n- 제공받는 자: 런치/디너 클럽장\n2. 제공받는 자의 이용 목적\n- 런치/디너 클럽의 같은 모임원 혹은 중복 매칭 방지\n- 런치/디너 클럽의 모임방 생성 자동화\n- 모임 배정 고도화\n3. 제공 항목 : 성함, 연락처, 소속 모임명\n4. 제공받는 자의 보유ㆍ이용 기간\n- 17기 런치/디너 클럽 진행 기간동안 보관하며, 운영 종료 시 파기\n동의 거부권리 : 위 개인정보 제공 동의를 거부하실 수 있음. 다만 이 경우 런치/디너 클럽의 가입 및 프로그램 이용이 거부될 수 있습니다.",
+          text: ":four: 개인정보 수집·이용 및 제3자 제공 동의서\n본인은 다음과 같이 메모어 17기 신청 정보 중 일부를 본 동의서에서 정하는 경우에 한하여 메모어 런치/디너 클럽장에게 제공하는 것을 동의합니다.\n1. 개인정보 제3자 제공 동의\n- 제공받는 자: 런치/디너 클럽장\n2. 제공받는 자의 이용 목적\n- 런치/디너 클럽의 같은 모임원 혹은 중복 매칭 방지\n- 런치/디너 클럽의 모임방 생성 자동화\n- 모임 배정 고도화\n3. 제공 항목 : 성함, 연락처, 소속 모임명\n4. 제공받는 자의 보유ㆍ이용 기간\n- 17기 런치/디너 클럽 진행 기간동안 보관하며, 운영 종료 시 파기\n동의 거부권리 : 위 개인정보 제공 동의를 거부하실 수 있음. 다만 이 경우 런치/디너 클럽의 가입 및 프로그램 이용이 거부될 수 있습니다.",
         },
       },
 
@@ -514,19 +551,15 @@ export class ClubJoinModalView {
     return [
       {
         type: "input",
+
         block_id: 런치클럽_관심사,
+
         element: {
           type: "checkboxes",
+
           action_id: 런치클럽_관심사,
 
-          // initial_options:
-          //   this.existingJoin?.[런치클럽_관심사]?.map((value) => ({
-          //     value,
-          //     text: {
-          //       type: "mrkdwn",
-          //       text: value,
-          //     },
-          //   })) ?? [],
+          initial_options: this.lunchClubTopics,
 
           options: [
             {
@@ -580,12 +613,15 @@ export class ClubJoinModalView {
     return [
       {
         type: "input",
+
         block_id: 디너클럽_일시,
+
         element: {
           type: "checkboxes",
+
           action_id: 디너클럽_일시,
 
-          // initial_options: this.dinnerDatetimes,
+          initial_options: this.dinnerDatetimes,
 
           options: [
             {
@@ -637,10 +673,16 @@ export class ClubJoinModalView {
 
       {
         type: "input",
+
         block_id: 디너클럽_장소,
+
         element: {
           type: "checkboxes",
+
           action_id: 디너클럽_장소,
+
+          initial_options: this.dinnerLocations,
+
           options: [
             {
               value: "강남/서초",

@@ -3,6 +3,7 @@ import { Messenger } from "../services/messenger";
 import { Sheets } from "../services/sheets";
 import { shuffle } from "../utils/shuffle";
 import { LunchClubMember } from "./club-member";
+import { KnownBlock } from "@slack/bolt";
 
 class LunchClub {
   constructor(
@@ -14,7 +15,9 @@ class LunchClub {
     await this.messenger.post(
       process.env.SLACK_LUNCH_CHANNEL as string,
       "런치클럽🍜 참가신청을 받습니다!",
-      this.messenger.createBlocks(gatherText, gatherActionOptions),
+      {
+        blocks: this.messenger.createBlocks(gatherText, gatherActionOptions),
+      },
     );
   }
 
@@ -163,7 +166,7 @@ const gatherActionOptions = [
       },
     ],
   },
-];
+] as KnownBlock[];
 
 const getNoticeText = (
   left: LunchClubMember,

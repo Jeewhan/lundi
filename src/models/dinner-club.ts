@@ -7,6 +7,7 @@ import { Sheets } from "../services/sheets";
 import { shuffle } from "../utils/shuffle";
 import ClubMember, { DinnerClubMember } from "./club-member";
 import DinnerGroup from "./dinner-group";
+import { KnownBlock } from "@slack/bolt";
 
 type Group =
   | [DinnerClubMember, DinnerClubMember, DinnerClubMember]
@@ -22,7 +23,9 @@ class DinnerClub {
     await this.messenger.post(
       process.env.SLACK_DINNER_CHANNEL as string,
       "디너클럽🍜 참가신청을 받습니다!",
-      this.messenger.createBlocks(gatherText, gatherActionOptions),
+      {
+        blocks: this.messenger.createBlocks(gatherText, gatherActionOptions),
+      },
     );
   }
 
@@ -273,4 +276,4 @@ const gatherActionOptions = [
       action_id: GATHER_DINNER_CLUB,
     },
   },
-];
+] as KnownBlock[];
