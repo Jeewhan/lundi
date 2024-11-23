@@ -31,8 +31,11 @@ import {
   LUNCH_DINNER_CLUB_JOIN_ACTION,
   NOT_READY_FOR_JOIN_CLUB_CALLBACK_ID,
   READY_FOR_JOIN_CLUB_CALLBACK_ID,
+  링크,
   아이디,
   일시,
+  자기소개,
+  텍스트,
 } from "./shared/constants";
 
 import serviceAccountCredentials from "../sheet-381101-882712223151.json";
@@ -88,12 +91,55 @@ const beforeOpenEach = async (id: string) => {
   const existingJoin = joins.find((row) => row.get(아이디) === id);
 
   if (!user) {
-    await slack.direct(
-      [process.env.LUNDI_MANAGER_SLACK_ID!],
-      `인지되지 못한 사용자입니다. ${id}`,
-    );
+    await slack.direct([process.env.LUNDI_MANAGER_SLACK_ID!], {
+      text: `인지되지 못한 사용자입니다. ${id}`,
+    });
 
     throw new Error("User not found");
+  }
+
+  if (!user.get(자기소개)) {
+    const introduceChannel = process.env.MEMOIR_17_INTRODUCE_CHANNEL!;
+
+    await slack.direct([process.env.LUNDI_MANAGER_SLACK_ID!], {
+      text: JSON.stringify(introduceChannel),
+    });
+
+    const { messages } = await slack.conversationHistories(introduceChannel, {
+      limit: 500,
+    });
+
+    if (messages) {
+      const introduce = messages.find(
+        ({ user, blocks }) => user === id && blocks,
+      );
+
+      if (introduce) {
+        const introducesSheet = doc.sheetsByTitle["Introduces"];
+
+        await introducesSheet.addRow({
+          [일시]: introduce.ts!,
+          [아이디]: id,
+          [링크]: `https://slack.com/archives/${introduceChannel}/p${introduce.ts?.replace(
+            ".",
+            "",
+          )}`,
+          [텍스트]: introduce.text!,
+        });
+
+        const users = await usersSheet.getRows();
+        const user = users.find((row) => row.get(아이디) === id);
+
+        if (user) {
+          const clubJoinModalView = new ClubJoinModalView(
+            new UserDTO(user.toObject()),
+            // existingJoin && new ClubJoinRecordDTO(existingJoin.toObject()),
+          );
+
+          return clubJoinModalView;
+        }
+      }
+    }
   }
 
   const clubJoinModalView = new ClubJoinModalView(
@@ -176,14 +222,40 @@ app.view(
     const joinsSheet = doc.sheetsByTitle["Joins"];
     const rows = await joinsSheet.getRows();
 
-    const existingJoin = rows.find((row) => row.get("id") === body.user.id);
+    const existingJoin = rows.find((row) => row.get(아이디) === body.user.id);
 
     if (existingJoin) {
       existingJoin.assign(member.row);
 
       await existingJoin.save();
+
+      await slack.direct([body.user.id], {
+        blocks: [
+          {
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: `수정이 완료되었습니다.`,
+            },
+          },
+          ...member.blocks,
+        ],
+      });
     } else {
       await joinsSheet.addRow(member.row);
+
+      await slack.direct([body.user.id], {
+        blocks: [
+          {
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: `신청이 완료되었습니다.`,
+            },
+          },
+          ...member.blocks,
+        ],
+      });
     }
   },
 );

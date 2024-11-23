@@ -30,8 +30,8 @@ const doc = new GoogleSpreadsheet(
   serviceAccountAuth,
 );
 
-// const invitations = new Invitations(slack, doc);
-// invitations.sendLunchDinnerClubAnnouncement();
+const invitations = new Invitations(slack, doc);
+invitations.sendLunchDinnerClubAnnouncement();
 
 // slack
 //   .conversationsMembers(process.env.MEMOIR_17_INTRODUCE_CHANNEL!)

@@ -13,6 +13,7 @@ import {
   클럽선택,
   일시,
 } from "../shared/constants";
+import { KnownBlock } from "@slack/bolt";
 
 export interface MemberValues {
   [연락처]: string;
@@ -92,5 +93,21 @@ export class Member {
       [디너클럽_일시]: this[디너클럽_일시].join(", "),
       [디너클럽_장소]: this[디너클럽_장소].join(", "),
     };
+  }
+
+  public get blocks(): KnownBlock[] {
+    const properties = Object.entries(this.row)
+      .filter(([key]) =>
+        [연락처, 런치클럽_관심사, 디너클럽_일시, 디너클럽_장소].includes(key),
+      )
+      .filter(([key, value]) => value);
+
+    return properties.map(([key, value]) => ({
+      type: "section" as const,
+      text: {
+        type: "mrkdwn" as const,
+        text: `${key}: ${value}`,
+      },
+    }));
   }
 }

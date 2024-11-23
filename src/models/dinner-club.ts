@@ -105,7 +105,7 @@ class DinnerClub {
     for (const group of groups) {
       const channel = await this.messenger.direct(
         group.memberIDs.concat(process.env.LUNDI_MANAGER_SLACK_ID as string),
-        group.noticeText,
+        { text: group.noticeText },
       );
 
       await this.log(group, channel);

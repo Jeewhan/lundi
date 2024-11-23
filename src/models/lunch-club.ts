@@ -72,7 +72,7 @@ class LunchClub {
     for (const [left, right] of pairs) {
       const channel = await this.messenger.direct(
         [left.id, right.id, process.env.LUNDI_MANAGER_SLACK_ID as string],
-        getNoticeText(left, right),
+        { text: getNoticeText(left, right) },
       );
 
       await this.log([left, right], channel);

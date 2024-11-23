@@ -3,6 +3,8 @@ import { A, F } from "@mobily/ts-belt";
 import { match, P } from "ts-pattern";
 
 import Slack from "../services/messenger";
+import { 일시 } from "../shared/constants";
+import { 아이디 } from "../shared/constants";
 
 export class Introduces {
   constructor(
@@ -29,8 +31,8 @@ export class Introduces {
       (message) =>
         !existingRecords.some(
           (record) =>
-            record.get("user") === message.user &&
-            record.get("timestamp") === message.ts,
+            record.get(아이디) === message.user &&
+            record.get(일시) === message.ts,
         ),
     );
 

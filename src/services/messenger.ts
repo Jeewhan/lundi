@@ -1,4 +1,4 @@
-import { App, Block } from "@slack/bolt";
+import { App, Block, KnownBlock } from "@slack/bolt";
 import type { ConversationsHistoryResponse } from "@slack/web-api/dist/response/ConversationsHistoryResponse";
 import type { ConversationsRepliesResponse } from "@slack/web-api/dist/response/ConversationsRepliesResponse";
 import type { ConversationsMembersResponse } from "@slack/web-api/dist/response/ConversationsMembersResponse";
@@ -6,7 +6,10 @@ import type { UsersInfoResponse } from "@slack/web-api/dist/response/UsersInfoRe
 
 export interface Messenger {
   post(channel: string, text: string, blocks?: Block[]): Promise<void>;
-  direct(users: string[], text: string): Promise<string>;
+  direct(
+    users: string[],
+    content: { text: string } | { blocks: KnownBlock[] },
+  ): Promise<string>;
   createChannel(name: string): Promise<string>;
   invite(channel: string, users: string[]): Promise<void>;
   createBlocks(text: string, actionOptions: Block[]): Block[];
@@ -40,7 +43,10 @@ class Slack implements Messenger {
     });
   }
 
-  public async direct(users: string[], text: string) {
+  public async direct(
+    users: string[],
+    content: { text: string } | { blocks: KnownBlock[] },
+  ) {
     const { channel } = await this.slack.client.conversations.open({
       users: users.join(","),
     });
@@ -51,7 +57,7 @@ class Slack implements Messenger {
 
     await this.slack.client.chat.postMessage({
       channel: channel.id,
-      text,
+      ...content,
     });
 
     return channel.id;
@@ -100,7 +106,12 @@ class Slack implements Messenger {
 
   public async conversationHistories(
     channel: string,
-    options?: { oldest?: string; latest?: string; cursor?: string },
+    options?: {
+      oldest?: string;
+      latest?: string;
+      cursor?: string;
+      limit?: number;
+    },
     accumulatedMessages: ConversationsHistoryResponse["messages"] = [],
   ): Promise<ConversationsHistoryResponse> {
     const response = await this.slack.client.conversations.history({

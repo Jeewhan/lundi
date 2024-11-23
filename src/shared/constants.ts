@@ -24,6 +24,9 @@ export const 디너클럽_장소 = "디너클럽_장소";
 export const 성함 = "성함";
 export const 자기소개 = "자기소개";
 
+export const 링크 = "링크";
+export const 텍스트 = "텍스트";
+
 export const CLUB_TYPES = {
   lunch: "lunch",
   dinner: "dinner",
