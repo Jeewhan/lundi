@@ -48,8 +48,9 @@ import serviceAccountCredentials from "../sheet-381101-882712223151.json";
 import { UserDTO } from "./dtos/user-dto";
 import { ClubJoinRecordDTO } from "./dtos/club-join-record-dto";
 
-if (!process.env.SLACK_SIGNING_SECRET)
+if (!process.env.SLACK_SIGNING_SECRET) {
   throw new Error("SLACK_SIGNING_SECRET is not defined");
+}
 
 const awsLambdaReceiver = new AwsLambdaReceiver({
   signingSecret: process.env.SLACK_SIGNING_SECRET,
@@ -252,7 +253,7 @@ app.action(
       await join.delete();
 
       await slack.direct([body.user.id], {
-        text: "참가신청이 취소되었습니다. 다음 기회에라도 뵙고 싶습니다.",
+        text: "참가신청이 취소되었습니다. 감사합니다.",
       });
     }
   },

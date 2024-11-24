@@ -18,18 +18,18 @@ export class Invitations {
 
   public async sendLunchDinnerClubAnnouncement() {
     const response = await this.messenger.post(
-      process.env.LUNDI_TEST_CHANNEL as string, // TODO: 배포 전 채널 변경
+      process.env.MEMOIR_17_ANNOUNCEMENT_CHANNEL as string,
       "런치클럽 & 디너클럽 모집해요 🎉",
       {
         blocks: LUNCH_DINNER_CLUB_INVITE_BUTTON_LAYOUT,
       },
     );
 
-    await this.messenger.post(
-      response.channel!,
-      "신청과 관련하여 해결하기 어려운 이슈가 발생할 경우, 이곳에 메시지를 남겨주세요.",
-      { thread_ts: response.ts },
-    );
+    // await this.messenger.post(
+    //   response.channel!,
+    //   "신청과 관련하여 해결하기 어려운 이슈가 발생할 경우, 이곳에 메시지를 남겨주세요.",
+    //   { thread_ts: response.ts },
+    // );
   }
 }
 

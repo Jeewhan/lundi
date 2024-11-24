@@ -97,6 +97,14 @@ export class Member {
   }
 
   public get blocks(): KnownBlock[] {
+    const relevantFields = [
+      연락처,
+      클럽선택,
+      런치클럽_관심사,
+      디너클럽_일시,
+      디너클럽_장소,
+    ] as const;
+
     const noticeBlock =
       this[클럽선택] === "런치디너"
         ? []
@@ -109,14 +117,6 @@ export class Member {
               },
             } as KnownBlock,
           ];
-
-    const relevantFields = [
-      연락처,
-      클럽선택,
-      런치클럽_관심사,
-      디너클럽_일시,
-      디너클럽_장소,
-    ] as const;
 
     const propertyBlocks = relevantFields
       .filter((field) =>
@@ -135,6 +135,6 @@ export class Member {
           } as SectionBlock),
       );
 
-    return [...noticeBlock, ...propertyBlocks];
+    return [...propertyBlocks, ...noticeBlock];
   }
 }
