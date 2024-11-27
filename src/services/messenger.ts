@@ -21,8 +21,11 @@ export interface Messenger {
   conversationHistories(
     channel: string,
     options?: {
-      oldest: string;
-      latest: string;
+      oldest?: string;
+      latest?: string;
+      cursor?: string;
+      limit?: number;
+      once?: boolean;
     },
   ): Promise<ConversationsHistoryResponse>;
   conversationsReplies(
@@ -121,6 +124,7 @@ class Slack implements Messenger {
       latest?: string;
       cursor?: string;
       limit?: number;
+      once?: boolean;
     },
     accumulatedMessages: ConversationsHistoryResponse["messages"] = [],
   ): Promise<ConversationsHistoryResponse> {
@@ -139,7 +143,7 @@ class Slack implements Messenger {
 
     const updatedMessages = [...accumulatedMessages, ...response.messages];
 
-    if (response.response_metadata?.next_cursor) {
+    if (!options?.once && response.response_metadata?.next_cursor) {
       return this.conversationHistories(
         channel,
         {
