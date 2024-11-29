@@ -4,10 +4,8 @@ import { GoogleSpreadsheet } from "google-spreadsheet";
 import { JWT } from "google-auth-library";
 
 import Slack from "./services/messenger";
-import { MincedGarlic } from "./models/geultto/minced-garlic";
 
 import serviceAccountCredentials from "../sheet-381101-882712223151.json";
-import { BookRead } from "./models/geultto/book-read";
 
 const serviceAccountAuth = new JWT({
   email: serviceAccountCredentials.client_email,
@@ -29,9 +27,3 @@ const doc = new GoogleSpreadsheet(
   process.env.CHECK_SHEET_ID!,
   serviceAccountAuth,
 );
-
-// const mincedGarlic = new MincedGarlic(slack, doc);
-// mincedGarlic.checkMonthlyAttendance();
-
-const bookRead = new BookRead(slack, doc);
-bookRead.check();
