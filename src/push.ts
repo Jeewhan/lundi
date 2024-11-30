@@ -10,6 +10,7 @@ import { Invitations } from "./entities/invitations";
 
 import serviceAccountCredentials from "../sheet-381101-882712223151.json";
 import { 성함, 아이디 } from "./shared/constants";
+import { Matcher } from "./match";
 
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
@@ -30,8 +31,11 @@ const doc = new GoogleSpreadsheet(
   serviceAccountAuth,
 );
 
-const invitations = new Invitations(slack, doc);
-invitations.sendLunchDinnerClubAnnouncement();
+const matcher = new Matcher(slack, doc);
+matcher.initialize();
+
+// const invitations = new Invitations(slack, doc);
+// invitations.sendLunchDinnerClubAnnouncement();
 
 // slack
 //   .conversationsMembers(process.env.MEMOIR_17_INTRODUCE_CHANNEL!)
